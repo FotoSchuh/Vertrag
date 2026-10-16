@@ -106,6 +106,18 @@ details[open] summary{margin-bottom:8px}
     <h1>Hochzeitsvertrag vorbereiten</h1>
     <p class="lead">Daten eintragen, Link per Mail ans Hochzeitspaar schicken. Das Paar prüft alles, unterschreibt am Handy oder PC und schickt euch die fertige PDF zurück.</p>
 
+    <section class="card" id="s_setup">
+      <h2>Verbindung zu GitHub</h2>
+      <div id="s_conn_ok" hidden><p>Verbunden mit <span class="code" id="s_repo"></span> ✓ <a href="#" id="s_tokenchange">Schlüssel ändern</a></p></div>
+      <div id="s_conn_form">
+        <p class="note">Einmalig auf diesem Gerät: den GitHub-Zugangsschlüssel (Fine-grained token) einfügen. Er bleibt nur in diesem Browser gespeichert.</p>
+        <label for="s_token">Zugangsschlüssel</label>
+        <input id="s_token" type="password" autocomplete="off" placeholder="github_pat_…">
+        <div class="actions"><button type="button" id="s_tokensave">Speichern &amp; prüfen</button></div>
+      </div>
+      <div id="s_tokenmsg" class="msg" hidden></div>
+    </section>
+
     <form id="sf" class="card" autocomplete="off">
       <h2>Hochzeitspaar</h2>
       <div class="grid">
@@ -152,11 +164,11 @@ details[open] summary{margin-bottom:8px}
       <div class="scroll"><table class="money" id="s_money"></table></div>
 
       <div class="actions">
-        <button type="submit">Link erstellen</button>
+        <button type="submit" id="s_submit">Vertrag erstellen &amp; Link holen</button>
         <button type="button" class="ghost" id="s_reset">Neues Formular</button>
       </div>
       <div id="s_out" hidden>
-        <div class="msg ok">Vertrag vorbereitet. Vertragsnummer <span class="code" id="s_code"></span> – kommt sie auf der unterschriebenen PDF genauso zurück, wurde nichts verändert.</div>
+        <div class="msg ok">Vertrag ist online. Vertragsnummer <span class="code" id="s_code"></span> – kommt sie auf der unterschriebenen PDF genauso zurück, wurde nichts verändert.</div>
         <p class="note" style="margin-top:10px">Verwendungszweck für die Terminreservierung: <strong id="s_vz"></strong></p>
         <div class="linkbox" id="s_link"></div>
         <div class="actions">
@@ -178,19 +190,13 @@ details[open] summary{margin-bottom:8px}
   <main id="kunde" hidden>
     <span class="badge">Euer Vertrag</span>
     <h1 id="k_title">Hochzeitsvertrag</h1>
-    <p class="lead">Wir haben euren Vertrag vorbereitet. Bitte prüft eure Daten, lest alles in Ruhe durch und unterschreibt ganz unten. Danach schickt ihr uns die PDF zurück.</p>
+    <p class="lead">Wir haben euren Vertrag vorbereitet. Bitte lest alles in Ruhe durch, entscheidet, ob wir Bilder als Referenz zeigen dürfen, und unterschreibt ganz unten. Danach schickt ihr uns die PDF zurück.</p>
+    <p class="msg" id="k_loading">Vertrag wird geladen …</p>
 
+    <div id="k_body" hidden>
     <section class="card">
       <h2>Eure Daten</h2>
-      <p class="note">Stimmt etwas nicht? Einfach hier korrigieren.</p>
-      <div class="grid">
-        <div><label for="k_n1">Name 1</label><input id="k_n1"></div>
-        <div><label for="k_n2">Name 2</label><input id="k_n2"></div>
-        <div><label for="k_str">Straße / Hausnummer</label><input id="k_str"></div>
-        <div><label for="k_ort">PLZ / Ort</label><input id="k_ort"></div>
-        <div><label for="k_tel">Telefon</label><input id="k_tel" type="tel"></div>
-        <div><label for="k_mail">E-Mail</label><input id="k_mail" type="email"></div>
-      </div>
+      <div class="grid" id="k_daten"></div>
       <h2 style="margin-top:22px">Termin und Ort</h2>
       <div class="grid" id="k_termin"></div>
       <p class="note" style="margin-top:10px" id="k_termin_hint"></p>
@@ -249,11 +255,12 @@ details[open] summary{margin-bottom:8px}
         <p class="note" id="k_payhint"></p>
       </div>
     </section>
+    </div>
   </main>
 
   <main id="fehler" hidden class="card">
-    <h1>Link unvollständig</h1>
-    <p>Dieser Vertragslink konnte nicht gelesen werden. Bitte öffnet den Link direkt aus unserer Mail oder meldet euch bei uns: <strong>0385 / 593 85 444</strong>.</p>
+    <h1 id="f_title">Link unvollständig</h1>
+    <p id="f_text">Dieser Vertragslink konnte nicht gelesen werden. Bitte öffnet den Link direkt aus unserer Mail oder meldet euch bei uns: <strong>0385 / 593 85 444</strong>.</p>
   </main>
   <footer class="note" style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
     <a href="https://www.foto-schuh.de/about/" target="_blank" rel="noopener">Impressum</a>
@@ -276,6 +283,7 @@ const CONFIG = {
     kontoinhaber: "Alexander Schuh",   // genau wie bei der Bank hinterlegt (Empfängerprüfung!)
     bank: "Sparkasse Neubrandenburg-Demmin", iban: "DE09 1505 0200 0301 0150 23", bic: "NOLADE21NBS"
   },
+  github: { owner: "FotoSchuh", repo: "Vertrag", branch: "main" },
   preise: { std: 99, halb: 49.5, km: 0.90, zuschlag: 0.35, reservierung: 0.50, mwst: 0.19 },
   pakete: {
     p1: { name: "Paket 1", dauer: "ca. 2 Stunden", preis: 299, leistungen: [
@@ -313,6 +321,38 @@ function b64d(str) { str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str
 function hashCode(str) { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
   return h.toString(36).toUpperCase().padStart(7, "0").slice(-6); }
 function names(d) { return [d.n1, d.n2].filter(Boolean).join(" & "); }
+/* ---------- Verschlüsselung & GitHub ---------- */
+const b2u = b => { let s = ""; b.forEach(x => s += String.fromCharCode(x)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const u2b = str => { str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "="; const bin = atob(str); return Uint8Array.from(bin, c => c.charCodeAt(0)); };
+const rnd = n => crypto.getRandomValues(new Uint8Array(n));
+async function aesKey(raw) { return crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["encrypt", "decrypt"]); }
+async function encryptData(obj, raw) {
+  const iv = rnd(12), ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await aesKey(raw), new TextEncoder().encode(JSON.stringify(obj))));
+  return JSON.stringify({ v: 2, iv: b2u(iv), ct: b2u(ct) });
+}
+async function decryptData(file, raw) {
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: u2b(file.iv) }, await aesKey(raw), u2b(file.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+const G = CONFIG.github;
+const ghToken = () => ls.get("fs_token", "");
+async function gh(method, path, body) {
+  const r = await fetch(`https://api.github.com/repos/${G.owner}/${G.repo}${path}`, { method,
+    headers: { "Authorization": "Bearer " + ghToken(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+    body: body ? JSON.stringify(body) : undefined });
+  if (!r.ok) { const t = await r.text().catch(() => ""); const e = new Error("GitHub " + r.status); e.status = r.status; e.detail = t; throw e; }
+  return r.status === 204 ? null : r.json();
+}
+function ghError(e) {
+  if (e.status === 401) return "Der Zugangsschlüssel ist ungültig oder abgelaufen. Bitte oben einen neuen eintragen.";
+  if (e.status === 403 || e.status === 404) return "Der Zugangsschlüssel darf nicht in das Projekt schreiben. Beim Erstellen „Contents: Read and write“ für das Projekt Vertrag wählen.";
+  return "Verbindung zu GitHub fehlgeschlagen (" + (e.message || e) + "). Bitte Internet prüfen und erneut versuchen.";
+}
+async function loadContractFile(id) {
+  const urls = [`v/${id}.json`, `https://raw.githubusercontent.com/${G.owner}/${G.repo}/${G.branch}/v/${id}.json`];
+  for (const u of urls) { try { const r = await fetch(u, { cache: "no-store" }); if (r.ok) return await r.json(); } catch (e) {} }
+  return null;
+}
 /* Verwendungszweck: Vertragsnummer + Nachname + Datum – eindeutig pro Vertrag, max. 140 Zeichen */
 function vzweck(d, art = "Terminreservierung") {
   const nn = (d.vzName || (d.n1 || "").trim().split(/\s+/).pop() || "").replace(/[^\wäöüÄÖÜß\- ]/g, "");
@@ -467,13 +507,24 @@ function studioRender() {
 }
 function studioList() {
   const list = ls.get("fs_vertraege", []);
-  if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge verschickt. Nach „Link erstellen“ erscheinen sie hier.</td></tr>`; return; }
+  if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge verschickt. Nach „Vertrag erstellen“ erscheinen sie hier.</td></tr>`; return; }
   $("s_list").innerHTML = `<tr><th>Hochzeitspaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Erstellt</th><th></th></tr>` +
     list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
-      <td><a href="${esc(x.link)}" target="_blank" rel="noopener">Link</a> · <a href="#" data-del="${i}">Entfernen</a></td></tr>`).join("");
+      <td><a href="${esc(x.link)}" target="_blank" rel="noopener">Link</a> · <a href="#" data-del="${i}" title="Löscht den Vertrag auch online – der Link funktioniert danach nicht mehr">Löschen</a></td></tr>`).join("");
 }
+function setMsg(kind, text) { const m = $("s_tokenmsg"); m.className = "msg " + kind; m.textContent = text; m.hidden = !text; }
+function connUI() { const t = ghToken(); $("s_conn_ok").hidden = !t; $("s_conn_form").hidden = !!t; $("s_repo").textContent = G.owner + "/" + G.repo; }
 function initStudio() {
   $("studio").hidden = false;
+  connUI();
+  $("s_tokenchange").addEventListener("click", e => { e.preventDefault(); $("s_conn_ok").hidden = true; $("s_conn_form").hidden = false; });
+  $("s_tokensave").addEventListener("click", async () => {
+    const t = $("s_token").value.trim(); if (!t) return;
+    const old = ghToken(); ls.set("fs_token", t);
+    try { const r = await gh("GET", ""); if (r.permissions && r.permissions.push === false) throw Object.assign(new Error("keine Schreibrechte"), { status: 403 });
+      $("s_token").value = ""; setMsg("ok", "Verbindung klappt. Ihr könnt jetzt Verträge erstellen."); connUI(); }
+    catch (err) { ls.set("fs_token", old); setMsg("err", ghError(err)); }
+  });
   $("s_pk").innerHTML = Object.entries(CONFIG.pakete).map(([k, p]) => `<option value="${k}">${esc(p.name)}${p.preis ? " – " + eur(p.preis) : ""}</option>`).join("");
   $("s_pk").value = "p2";
   const draft = ls.get("fs_entwurf", null);
@@ -481,24 +532,33 @@ function initStudio() {
   $("sf").addEventListener("input", studioRender);
   $("sf").addEventListener("change", studioRender);
   $("s_reset").addEventListener("click", () => { $("sf").reset(); $("s_pk").value = "p2"; studioRender(); });
-  $("sf").addEventListener("submit", e => {
+  $("sf").addEventListener("submit", async e => {
     e.preventDefault();
     const d = studioData();
     if (!d.n1 || !d.datum) { alert("Bitte mindestens Name 1 und das Hochzeitsdatum eintragen."); return; }
-    const base = location.href.split("#")[0];
-    const link = base + "#v=" + b64e(d);
-    const code = contractCode(d), c = calc(d);
-    $("s_code").textContent = code; $("s_vz").textContent = vzweck(d);
-    $("s_link").textContent = link;
-    $("s_preview").href = link;
-    const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, prüft eure Daten und unterschreibt direkt am Handy oder PC:\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
-    $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
-    $("s_out").hidden = false;
-    const list = ls.get("fs_vertraege", []).filter(x => x.code !== code);
-    list.unshift({ namen: names(d), datum: d.datum, total: c.total, code, vd: d.vd, link, vz: vzweck(d) });
-    ls.set("fs_vertraege", list.slice(0, 200));
-    studioList();
-    $("s_out").scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!ghToken()) { setMsg("err", "Bitte zuerst oben den GitHub-Zugangsschlüssel eintragen."); $("s_setup").scrollIntoView({ behavior: "smooth" }); return; }
+    const btn = $("s_submit"); btn.disabled = true; btn.textContent = "Wird hochgeladen …";
+    try {
+      const id = b2u(rnd(6)), key = rnd(16);
+      const file = await encryptData(d, key);
+      await gh("PUT", `/contents/v/${id}.json`, { message: `Vertrag ${id}`, content: btoa(file), branch: G.branch });
+      const base = location.href.split("#")[0];
+      const link = base + "#" + id + b2u(key);
+      const code = contractCode(d), c = calc(d);
+      $("s_code").textContent = code; $("s_vz").textContent = vzweck(d);
+      $("s_link").textContent = link;
+      $("s_preview").href = link;
+      const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
+      $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
+      $("s_out").hidden = false;
+      const list = ls.get("fs_vertraege", []);
+      list.unshift({ namen: names(d), datum: d.datum, total: c.total, code, vd: d.vd, link, vz: vzweck(d), id });
+      ls.set("fs_vertraege", list.slice(0, 300));
+      studioList();
+      $("s_out").scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (err) {
+      console.error(err); setMsg("err", ghError(err)); $("s_setup").scrollIntoView({ behavior: "smooth" });
+    } finally { btn.disabled = false; btn.textContent = "Vertrag erstellen & Link holen"; }
   });
   $("s_copy").addEventListener("click", async () => {
     const t = $("s_link").textContent;
@@ -506,9 +566,17 @@ function initStudio() {
     catch (e) { const r = document.createRange(); r.selectNodeContents($("s_link")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("s_copy").textContent = "Markiert – jetzt kopieren"; }
     setTimeout(() => $("s_copy").textContent = "Link kopieren", 2500);
   });
-  $("s_list").addEventListener("click", e => {
+  $("s_list").addEventListener("click", async e => {
     const i = e.target.getAttribute("data-del"); if (i === null) return; e.preventDefault();
-    const list = ls.get("fs_vertraege", []); list.splice(+i, 1); ls.set("fs_vertraege", list); studioList();
+    const list = ls.get("fs_vertraege", []), x = list[+i];
+    if (e.target.dataset.sure !== "1") { e.target.dataset.sure = "1"; e.target.textContent = "Wirklich löschen?"; return; }
+    e.target.textContent = "Lösche …";
+    if (x && x.id && ghToken()) {
+      try { const f = await gh("GET", `/contents/v/${x.id}.json?ref=${G.branch}`);
+        await gh("DELETE", `/contents/v/${x.id}.json`, { message: `Vertrag ${x.id} gelöscht`, sha: f.sha, branch: G.branch }); }
+      catch (err) { if (err.status !== 404) { setMsg("err", ghError(err)); e.target.textContent = "Löschen"; e.target.dataset.sure = ""; return; } }
+    }
+    list.splice(+i, 1); ls.set("fs_vertraege", list); studioList();
   });
   studioRender(); studioList();
 }
@@ -534,17 +602,18 @@ function makePad(id) {
 }
 function kundeData() {
   const d = JSON.parse(JSON.stringify(D));
-  ["n1","n2","str","ort","tel","mail"].forEach(k => d[k] = $("k_" + k).value.trim());
+
   return d;
 }
 function initKunde(data) {
   D = data;
   $("kunde").hidden = false;
   $("k_title").textContent = "Hochzeitsvertrag" + (names(D) ? " – " + names(D) : "");
-  ["n1","n2","str","ort","tel","mail"].forEach(k => $("k_" + k).value = D[k] || "");
+  const dd = [["Name", D.n1], ["Name", D.n2], ["Anschrift", [D.str, D.ort].filter(Boolean).join(", ")], ["Telefon", D.tel], ["E-Mail", D.mail]];
+  $("k_daten").innerHTML = dd.filter(x => x[1]).map((x, i) => `<div><label for="kd${i}">${esc(x[0])}</label><input id="kd${i}" readonly value="${esc(x[1])}"></div>`).join("");
   const t = [["Datum der Hochzeit", dDE(D.datum)], ["Beginn", D.zeit ? D.zeit + " Uhr" : "nach Absprache"], ["Trauung / Standesamt", D.trau], ["Weitere Location", D.loc]];
   $("k_termin").innerHTML = t.filter(x => x[1]).map((x, i) => `<div><label for="kt${i}">${esc(x[0])}</label><input id="kt${i}" readonly value="${esc(x[1])}"></div>`).join("");
-  $("k_termin_hint").textContent = `Termin oder Ort falsch? Bitte nicht unterschreiben, sondern kurz anrufen: ${S.tel}.`;
+  $("k_termin_hint").textContent = `Stimmt etwas nicht? Bitte nicht unterschreiben, sondern kurz anrufen: ${S.tel} – wir schicken euch dann einen korrigierten Vertrag.`;
   $("k_paket").innerHTML = `<div class="pkg">${esc(D.pkName)} · ${esc(D.pkDauer)} · ${eur(D.pkPreis)}</div><ul class="leist">${D.pkL.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
     (D.notiz ? `<h3>Zusätzliche Vereinbarungen</h3><p>${esc(D.notiz).replace(/\n/g, "<br>")}</p>` : "");
   $("k_money").innerHTML = moneyRows(calc(D), D.u);
@@ -555,9 +624,8 @@ function initKunde(data) {
   $("k_ortU").value = (D.ort || "").replace(/^\d{5}\s*/, "");
   $("k_datU").value = dDE(today());
   pads.A = makePad("padA"); pads.B = makePad("padB");
-  const upd = () => { $("sigA_name").textContent = "Unterschrift " + ($("k_n1").value || "Auftraggeber");
-    $("sigB_name").textContent = "Unterschrift " + ($("k_n2").value || ""); $("sigB").hidden = !$("k_n2").value.trim(); };
-  ["k_n1","k_n2"].forEach(id => $(id).addEventListener("input", upd)); upd();
+  $("sigA_name").textContent = "Unterschrift " + (D.n1 || "Auftraggeber");
+  $("sigB_name").textContent = "Unterschrift " + (D.n2 || ""); $("sigB").hidden = !D.n2;
   document.querySelectorAll("[data-clear]").forEach(b => b.addEventListener("click", () => pads[b.dataset.clear].clear()));
   let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { pads.A.size(); pads.B.size(); }, 150); });
   $("k_sign").addEventListener("click", sign);
@@ -703,11 +771,18 @@ async function buildPDF(d, s) {
 
 /* ---------- Start ---------- */
 $("kopf").innerHTML = `${esc(S.strasse)} · ${esc(S.ort)}<br>${esc(S.tel)} · ${esc(S.mail)}`;
-function boot() {
+function showError(title, html) { $("kunde").hidden = true; $("f_title").textContent = title; $("f_text").innerHTML = html; $("fehler").hidden = false; }
+async function boot() {
   ["studio", "kunde", "fehler"].forEach(id => $(id).hidden = true);
-  const m = location.hash.match(/^#v=(.+)$/);
-  if (m) { try { const d = b64d(m[1]); if (!d.pkName || !d.u) throw 0; initKunde(d); } catch (e) { $("fehler").hidden = false; } }
-  else initStudio();
+  if (location.hash === "#studio") { initStudio(); return; }
+  const m = location.hash.match(/^#([A-Za-z0-9_-]{8})([A-Za-z0-9_-]{22})$/);
+  if (!m) { showError("Hochzeitsvertrag", `Bitte öffnet den Link aus unserer Mail, um euren Vertrag zu sehen. Fragen? <strong>${esc(S.tel)}</strong> · ${esc(S.mail)}`); return; }
+  $("kunde").hidden = false;
+  const file = await loadContractFile(m[1]);
+  if (!file) { showError("Vertrag nicht gefunden", `Dieser Vertrag ist (noch) nicht verfügbar. Wurde er gerade erst verschickt, versucht es in einer Minute noch einmal. Sonst meldet euch bitte: <strong>${esc(S.tel)}</strong>.`); return; }
+  let d; try { d = await decryptData(file, u2b(m[2])); } catch (e) { showError("Link unvollständig", `Dieser Vertragslink ist nicht vollständig. Bitte öffnet den Link direkt aus unserer Mail oder meldet euch bei uns: <strong>${esc(S.tel)}</strong>.`); return; }
+  $("k_loading").hidden = true; $("k_body").hidden = false;
+  initKunde(d);
 }
 window.addEventListener("hashchange", () => location.reload());
 boot();
