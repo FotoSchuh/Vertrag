@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Hochzeitsvertrag · Foto Schuh</title>
+<style>
+/* Layout: eine ruhige Spalte wie ein Vertragsblatt, Orange nur als Markierung (Logo-Farbe). */
+:root{
+  --bg:#f6f5f3; --paper:#ffffff; --ink:#1f1c1a; --muted:#6d655e; --line:#e3ddd6;
+  --accent:#e87500; --accent-ink:#ffffff; --accent-soft:#fdf0e4; --ok:#2f7d4f; --warn:#b3261e;
+  --field:#fffaf4;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius:10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#171513; --paper:#211e1b; --ink:#f1ece6; --muted:#a59c93; --line:#3a3530;
+    --accent:#ff8a1f; --accent-ink:#1a1009; --accent-soft:#3a2614; --ok:#6cc08f; --warn:#ff8a80; --field:#2a2621; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:820px;margin:0 auto;padding-block:20px 60px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+header.top img{height:56px;width:auto}
+header.top .contact{font-size:13px;color:var(--muted);text-align:right}
+@media (prefers-color-scheme: dark){ header.top img{background:#fff;border-radius:8px;padding:6px} }
+h1{font-size:clamp(24px,5vw,32px);line-height:1.15;margin:0 0 6px;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:18px;margin:0 0 12px;color:var(--accent);text-wrap:balance}
+h3{font-size:15px;margin:16px 0 6px}
+p{margin:0 0 10px}
+.lead{color:var(--muted);margin-bottom:18px;max-width:62ch}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 16px}
+.grid > *{min-width:0}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.01em}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);
+  border-radius:8px;padding:10px 12px;min-height:44px}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input[readonly]{background:transparent;border-style:dashed}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:15px;margin:10px 0}
+.check input{width:22px;height:22px;min-height:0;margin-top:2px;flex:none;accent-color:var(--accent)}
+.check span{min-width:0}
+.radio-row{display:flex;gap:10px;flex-wrap:wrap}
+.radio-row label.opt{flex:1 1 220px;display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;
+  padding:12px;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;background:var(--field)}
+.radio-row input{width:20px;height:20px;min-height:0;accent-color:var(--accent)}
+button,.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:12px 18px;min-height:46px;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+button.ghost,.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button[disabled]{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.money{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+.money td{padding:8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.money td.calc{color:var(--muted);font-size:13px;padding-left:10px}
+.money td.amt{text-align:right;white-space:nowrap;padding-left:10px}
+.money tr.total td{font-weight:700;font-size:17px;border-bottom:2px solid var(--ink)}
+.money tr.sub td{color:var(--muted);font-size:14px}
+ul.leist{margin:6px 0 0;padding-left:20px}
+ul.leist li{margin:2px 0}
+.pkg{font-weight:700;font-size:17px}
+.legal h3{color:var(--ink)}
+.legal p,.legal li{font-size:14.5px;color:var(--ink)}
+.legal ul{padding-left:20px;margin:0 0 10px}
+details{border-top:1px solid var(--line);padding:12px 0}
+details summary{cursor:pointer;font-weight:700;color:var(--ink);min-height:30px}
+details[open] summary{margin-bottom:8px}
+.sigbox{border:1px dashed var(--muted);border-radius:8px;background:#fff;touch-action:none;width:100%;height:170px;display:block}
+.sig-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.sig-wrap > div{min-width:0}
+.sig-label{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:14px;font-weight:600}
+.sig-label button{min-height:32px;padding:4px 10px;font-size:13px}
+.note{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--accent-soft);
+  color:var(--accent);border-radius:999px;padding:3px 10px;margin-bottom:10px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;letter-spacing:.04em}
+.msg{border-radius:8px;padding:12px 14px;margin-top:12px;font-size:15px}
+.msg.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ink);border:1px solid var(--ok)}
+.msg.err{background:color-mix(in srgb,var(--warn) 12%,transparent);border:1px solid var(--warn)}
+.list{width:100%;border-collapse:collapse;font-size:14px}
+.list td,.list th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.list th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.scroll{overflow-x:auto}
+.linkbox{max-height:96px;overflow:auto;word-break:break-all;font-size:13px;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px}
+.hidden-ind{display:none}
+.sticky-sum{position:sticky;bottom:0;background:var(--paper);border-top:1px solid var(--line);margin:16px -20px -20px;padding:12px 20px;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:0 0 var(--radius) var(--radius);font-weight:700}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="logo.png" alt="Foto Schuh">
+    <div class="contact" id="kopf"></div>
+  </header>
+
+  <!-- ===================== STUDIO ===================== -->
+  <main id="studio" hidden>
+    <span class="badge">Studio</span>
+    <h1>Hochzeitsvertrag vorbereiten</h1>
+    <p class="lead">Daten eintragen, Link per Mail ans Brautpaar schicken. Das Paar prüft alles, unterschreibt am Handy oder PC und schickt euch die fertige PDF zurück.</p>
+
+    <form id="sf" class="card" autocomplete="off">
+      <h2>Brautpaar</h2>
+      <div class="grid">
+        <div><label for="s_n1">Name 1</label><input id="s_n1" required></div>
+        <div><label for="s_n2">Name 2</label><input id="s_n2"></div>
+        <div><label for="s_str">Straße / Hausnummer</label><input id="s_str"></div>
+        <div><label for="s_ort">PLZ / Ort</label><input id="s_ort"></div>
+        <div><label for="s_tel">Telefon</label><input id="s_tel" type="tel"></div>
+        <div><label for="s_mail">E-Mail</label><input id="s_mail" type="email"></div>
+      </div>
+
+      <h2 style="margin-top:22px">Hochzeit</h2>
+      <div class="grid">
+        <div><label for="s_datum">Datum der Hochzeit</label><input id="s_datum" type="date" required></div>
+        <div><label for="s_zeit">Beginn</label><input id="s_zeit" type="time"></div>
+        <div><label for="s_trau">Trauung / Standesamt</label><input id="s_trau"></div>
+        <div><label for="s_loc">Weitere Location (Paarfotos / Feier)</label><input id="s_loc"></div>
+      </div>
+
+      <h2 style="margin-top:22px">Leistung</h2>
+      <div class="grid">
+        <div><label for="s_pk">Paket</label><select id="s_pk"></select></div>
+        <div><label for="s_std">Zusätzliche ganze Stunden</label><input id="s_std" type="number" min="0" step="1" value="0"></div>
+        <div><label for="s_halb">Zusätzliche halbe Stunden</label><input id="s_halb" type="number" min="0" step="1" value="0"></div>
+        <div><label for="s_sonn">Sonn- oder Feiertag?</label><select id="s_sonn"><option value="0">Nein</option><option value="1">Ja – 35 % Zuschlag</option></select></div>
+        <div><label for="s_nacht">Stunden ab Mitternacht</label><input id="s_nacht" type="number" min="0" step="0.5" value="0"></div>
+        <div><label for="s_km">Einfache Strecke in km</label><input id="s_km" type="number" min="0" step="1" value="0"></div>
+        <div><label for="s_unt">Unterkunftskosten (€)</label><input id="s_unt" type="number" min="0" step="0.01" value="0"></div>
+        <div><label for="s_sonstT">Sonstiges – Bezeichnung</label><input id="s_sonstT" placeholder="z. B. Fotobuch"></div>
+        <div><label for="s_sonstB">Sonstiges – Betrag (€)</label><input id="s_sonstB" type="number" min="0" step="0.01" value="0"></div>
+      </div>
+      <div id="indBox" hidden style="margin-top:12px">
+        <div class="grid">
+          <div><label for="s_indP">Preis Individuell (€)</label><input id="s_indP" type="number" min="0" step="0.01" value="0"></div>
+          <div><label for="s_indD">Dauer</label><input id="s_indD" value="nach Absprache"></div>
+        </div>
+        <label for="s_indL" style="margin-top:10px">Leistungen (eine pro Zeile)</label>
+        <textarea id="s_indL"></textarea>
+      </div>
+      <label for="s_notiz" style="margin-top:16px">Zusätzliche Vereinbarungen (erscheinen im Vertrag)</label>
+      <textarea id="s_notiz" placeholder="optional"></textarea>
+
+      <h2 style="margin-top:22px">Vergütung</h2>
+      <div class="scroll"><table class="money" id="s_money"></table></div>
+
+      <div class="actions">
+        <button type="submit">Link erstellen</button>
+        <button type="button" class="ghost" id="s_reset">Neues Formular</button>
+      </div>
+      <div id="s_out" hidden>
+        <div class="msg ok">Vertrag vorbereitet. Vertragsnummer <span class="code" id="s_code"></span> – kommt sie auf der unterschriebenen PDF genauso zurück, wurde nichts verändert.</div>
+        <p class="note" style="margin-top:10px">Verwendungszweck für die Terminreservierung: <strong id="s_vz"></strong></p>
+        <div class="linkbox" id="s_link"></div>
+        <div class="actions">
+          <a class="btn" id="s_mailbtn" href="#">Per Mail ans Brautpaar</a>
+          <button type="button" class="ghost" id="s_copy">Link kopieren</button>
+          <a class="btn ghost" id="s_preview" href="#" target="_blank" rel="noopener">Ansicht wie beim Brautpaar</a>
+        </div>
+      </div>
+    </form>
+
+    <section class="card">
+      <h2>Verschickte Verträge</h2>
+      <p class="note">Nur auf diesem Gerät gespeichert. Vergleicht die Vertragsnummer auf der zurückgeschickten PDF mit dieser Liste.</p>
+      <div class="scroll"><table class="list" id="s_list"></table></div>
+    </section>
+  </main>
+
+  <!-- ===================== KUNDE ===================== -->
+  <main id="kunde" hidden>
+    <span class="badge">Euer Vertrag</span>
+    <h1 id="k_title">Hochzeitsvertrag</h1>
+    <p class="lead">Wir haben euren Vertrag vorbereitet. Bitte prüft eure Daten, lest alles in Ruhe durch und unterschreibt ganz unten. Danach schickt ihr uns die PDF zurück.</p>
+
+    <section class="card">
+      <h2>Eure Daten</h2>
+      <p class="note">Stimmt etwas nicht? Einfach hier korrigieren.</p>
+      <div class="grid">
+        <div><label for="k_n1">Name 1</label><input id="k_n1"></div>
+        <div><label for="k_n2">Name 2</label><input id="k_n2"></div>
+        <div><label for="k_str">Straße / Hausnummer</label><input id="k_str"></div>
+        <div><label for="k_ort">PLZ / Ort</label><input id="k_ort"></div>
+        <div><label for="k_tel">Telefon</label><input id="k_tel" type="tel"></div>
+        <div><label for="k_mail">E-Mail</label><input id="k_mail" type="email"></div>
+      </div>
+      <h2 style="margin-top:22px">Termin und Ort</h2>
+      <div class="grid" id="k_termin"></div>
+      <p class="note" style="margin-top:10px" id="k_termin_hint"></p>
+    </section>
+
+    <section class="card">
+      <h2>Gebuchte Leistung</h2>
+      <div id="k_paket"></div>
+      <h2 style="margin-top:22px">Vergütung</h2>
+      <div class="scroll"><table class="money" id="k_money"></table></div>
+      <p class="note" style="margin-top:8px">Vertragsnummer <span class="code" id="k_code"></span></p>
+      <h2 style="margin-top:22px">Überweisung</h2>
+      <div id="k_pay"></div>
+    </section>
+
+    <section class="card legal" id="k_legal"></section>
+
+    <section class="card">
+      <h2>Veröffentlichung als Referenz</h2>
+      <p>Dürfen wir ausgewählte Bilder von euch als Referenz zeigen (Website, Social Media, Studio)? Das ist freiwillig und jederzeit widerrufbar.</p>
+      <div class="radio-row">
+        <label class="opt"><input type="radio" name="ref" id="k_ref_ja" value="ja"> Ja, gern</label>
+        <label class="opt"><input type="radio" name="ref" id="k_ref_nein" value="nein"> Nein, bitte nicht</label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Unterschrift</h2>
+      <label class="check"><input type="checkbox" id="k_ok1"><span>Wir haben unsere Daten geprüft und den Vertrag gelesen.</span></label>
+      <label class="check"><input type="checkbox" id="k_ok2"><span>Wir haben die Widerrufsbelehrung und die Datenschutzhinweise zur Kenntnis genommen.</span></label>
+      <div class="grid" style="margin:10px 0 16px">
+        <div><label for="k_ortU">Ort</label><input id="k_ortU"></div>
+        <div><label for="k_datU">Datum</label><input id="k_datU" readonly></div>
+      </div>
+      <div class="sig-wrap">
+        <div id="sigA">
+          <div class="sig-label"><span id="sigA_name">Unterschrift</span><button type="button" class="ghost" data-clear="A">Löschen</button></div>
+          <canvas class="sigbox" id="padA" aria-label="Unterschriftfeld 1"></canvas>
+        </div>
+        <div id="sigB">
+          <div class="sig-label"><span id="sigB_name">Unterschrift</span><button type="button" class="ghost" data-clear="B">Löschen</button></div>
+          <canvas class="sigbox" id="padB" aria-label="Unterschriftfeld 2"></canvas>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">Mit Finger oder Maus im Feld unterschreiben.</p>
+      <div id="k_err" class="msg err" hidden></div>
+      <div class="actions"><button type="button" id="k_sign">Unterschreiben &amp; PDF erstellen</button></div>
+      <div id="k_done" hidden>
+        <div class="msg ok">Fertig! Euer unterschriebener Vertrag ist erstellt. Bitte schickt ihn uns jetzt per Mail an <strong id="k_mailto_txt"></strong>.</div>
+        <div class="actions">
+          <button type="button" id="k_share" hidden>PDF an Foto Schuh senden</button>
+          <a class="btn ghost" id="k_dl" href="#" download>PDF speichern</a>
+          <a class="btn ghost" id="k_mailbtn" href="#">E-Mail öffnen</a>
+        </div>
+        <p class="note">Am PC: PDF speichern, dann im E-Mail-Programm als Anhang anfügen. Am Handy: „PDF an Foto Schuh senden“ und Mail auswählen.</p>
+        <p class="note" id="k_payhint"></p>
+      </div>
+    </section>
+  </main>
+
+  <main id="fehler" hidden class="card">
+    <h1>Link unvollständig</h1>
+    <p>Dieser Vertragslink konnte nicht gelesen werden. Bitte öffnet den Link direkt aus unserer Mail oder meldet euch bei uns: <strong>0385 / 593 85 444</strong>.</p>
+  </main>
+  <footer class="note" style="margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+    <a href="https://www.foto-schuh.de/about/" target="_blank" rel="noopener">Impressum</a>
+    <a href="https://www.foto-schuh.de/j/privacy" target="_blank" rel="noopener">Datenschutzerklärung</a>
+    <a href="https://www.foto-schuh.de/" target="_blank" rel="noopener">www.foto-schuh.de</a>
+  </footer>
+</div>
+
+<script src="jspdf.umd.min.js"></script>
+<script src="qrcode.js"></script>
+<script>
+/* ============================================================
+   EINSTELLUNGEN – hier Preise, Pakete und Studiodaten ändern
+   ============================================================ */
+const CONFIG = {
+  studio: {
+    name: "Foto Schuh", inhaber: "Kay-Alexander Schuh",
+    strasse: "Lübecker Straße 53", ort: "19053 Schwerin",
+    tel: "0385 / 593 85 444", mail: "info@foto-schuh.de", web: "www.foto-schuh.de",
+    kontoinhaber: "Alexander Schuh",   // genau wie bei der Bank hinterlegt (Empfängerprüfung!)
+    bank: "Sparkasse Neubrandenburg-Demmin", iban: "DE09 1505 0200 0301 0150 23", bic: "NOLADE21NBS"
+  },
+  preise: { std: 99, halb: 49.5, km: 0.90, zuschlag: 0.35, reservierung: 0.50, mwst: 0.19 },
+  pakete: {
+    p1: { name: "Paket 1", dauer: "ca. 2 Stunden", preis: 299, leistungen: [
+      "kostenloses persönliches Vorgespräch", "Aufnahmen der Trauung", "Paarfotos im Freien & Gruppenbild",
+      "passwortgeschützte Online-Galerie", "alle Bilder bearbeitet zum Download" ] },
+    p2: { name: "Paket 2", dauer: "ca. 3 Stunden", preis: 449, leistungen: [
+      "kostenloses persönliches Vorgespräch", "Aufnahmen der Trauung", "Sektempfang & Gratulationen",
+      "Paarfotos im Freien & Gruppenbild", "mehr Zeit für Paarfotos an einer Location eurer Wahl",
+      "passwortgeschützte Online-Galerie", "alle Bilder bearbeitet zum Download" ] },
+    p3: { name: "Paket 3", dauer: "ca. 6 Stunden", preis: 999, leistungen: [
+      "kostenloses persönliches Vorgespräch", "Beginn nach eurem Wunsch, z. B. schon beim Getting Ready",
+      "Aufnahmen der Trauung", "Sektempfang & Gratulationen", "Paarfotos im Freien & Gruppenbild an einer Location eurer Wahl",
+      "Detailaufnahmen (Ringe, Kleid, Deko …)", "Begleitung bis in die Feier (z. B. Hochzeitstanz, Tortenanschnitt)",
+      "ausführliche Reportage des Tages", "passwortgeschützte Online-Galerie", "alle Bilder bearbeitet zum Download" ] },
+    ind: { name: "Individuelles Angebot", dauer: "nach Absprache", preis: 0, leistungen: [] }
+  }
+};
+const S = CONFIG.studio;
+
+/* ---------- Hilfsfunktionen ---------- */
+const $ = id => document.getElementById(id);
+const eur = n => (Math.round(n * 100) / 100).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isFinite(n) && n > 0 ? n : 0; };
+const r2 = n => Math.round(n * 100) / 100;
+const dDE = iso => { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}.${m}.${y}`; };
+const today = () => { const t = new Date(); return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0"); };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ls = { get(k, f) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } },
+             set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+function b64e(obj) { const b = new TextEncoder().encode(JSON.stringify(obj)); let s = ""; b.forEach(x => s += String.fromCharCode(x));
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function b64d(str) { str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "=";
+  const bin = atob(str); const b = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(b)); }
+function hashCode(str) { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36).toUpperCase().padStart(7, "0").slice(-6); }
+function names(d) { return [d.n1, d.n2].filter(Boolean).join(" & "); }
+/* Verwendungszweck: Vertragsnummer + Nachname + Datum – eindeutig pro Vertrag, max. 140 Zeichen */
+function vzweck(d, art = "Terminreservierung") {
+  const nn = (d.vzName || (d.n1 || "").trim().split(/\s+/).pop() || "").replace(/[^\wäöüÄÖÜß\- ]/g, "");
+  return `${art} ${contractCode(d)} ${nn} Hochzeit ${dDE(d.datum)}`.replace(/\s+/g, " ").trim().slice(0, 140);
+}
+/* GiroCode (EPC-QR): mit der Banking-App scannen, Betrag und Verwendungszweck sind schon eingetragen */
+function epcQR(amount, text) {
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+  const payload = ["BCD", "002", "1", "SCT", S.bic.trim(), S.kontoinhaber, S.iban.replace(/\s/g, ""),
+    "EUR" + amount.toFixed(2), "", "", text].join("\n");
+  const q = qrcode(0, "M"); q.addData(payload); q.make(); return q;
+}
+function qrSVG(q, size) {
+  const n = q.getModuleCount(), m = 4, t = n + 2 * m; let r = "";
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) r += `M${x + m},${y + m}h1v1h-1z`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t} ${t}" width="${size}" height="${size}" role="img" aria-label="GiroCode"><rect width="${t}" height="${t}" fill="#fff"/><path d="${r}" fill="#000"/></svg>`;
+}
+
+/* ---------- Berechnung ---------- */
+function calc(d) {
+  const u = d.u, L = [];
+  const add = (key, label, info, amt) => L.push({ key, label, info, amt: r2(amt) });
+  add("pk", d.pkName, d.pkDauer, d.pkPreis);
+  if (d.std) add("std", "Zusätzliche Stunden", `${d.std} × ${eur(u.std)}`, d.std * u.std);
+  if (d.halb) add("halb", "Zusätzliche halbe Stunden", `${d.halb} × ${eur(u.halb)}`, d.halb * u.halb);
+  const base = d.pkPreis + d.std * u.std + d.halb * u.halb;
+  if (d.sonn) add("sonn", "Zuschlag Sonn-/Feiertag", `${Math.round(u.zuschlag * 100)} % auf Paket + Zusatzzeit`, base * u.zuschlag);
+  if (d.nacht) add("nacht", "Zuschlag ab Mitternacht", `${String(d.nacht).replace(".", ",")} Std. × ${eur(u.std)} × ${Math.round(u.zuschlag * 100)} %`, d.nacht * u.std * u.zuschlag);
+  if (d.km) add("km", "An- und Abfahrt", `${d.km} km × 2 × ${eur(u.km)}`, d.km * 2 * u.km);
+  if (d.unt) add("unt", "Unterkunftskosten", "", d.unt);
+  if (d.sonstB || d.sonstT) add("sonst", d.sonstT || "Sonstiges", "", d.sonstB);
+  const total = r2(L.reduce((s, x) => s + x.amt, 0));
+  const res = r2(total * u.reservierung);
+  const mwst = r2(total - total / (1 + u.mwst));
+  return { L, total, res, rest: r2(total - res), mwst };
+}
+function moneyRows(c, u) {
+  let h = c.L.map(x => `<tr><td>${esc(x.label)}</td><td class="calc">${esc(x.info)}</td><td class="amt">${eur(x.amt)}</td></tr>`).join("");
+  h += `<tr class="total"><td>Gesamtbetrag</td><td></td><td class="amt">${eur(c.total)}</td></tr>`;
+  h += `<tr class="sub"><td>Terminreservierung (${Math.round(u.reservierung * 100)} %)</td><td class="calc">innerhalb von 7 Tagen</td><td class="amt">${eur(c.res)}</td></tr>`;
+  h += `<tr class="sub"><td>Restbetrag</td><td class="calc">am Hochzeitstag nach dem Shooting</td><td class="amt">${eur(c.rest)}</td></tr>`;
+  h += `<tr class="sub"><td>enthaltene MwSt. (${Math.round(u.mwst * 100)} %)</td><td></td><td class="amt">${eur(c.mwst)}</td></tr>`;
+  return h;
+}
+function contractCode(d) {
+  const c = calc(d);
+  return "FS-" + hashCode(JSON.stringify([d.datum, d.pkName, d.pkPreis, d.pkL, d.std, d.halb, d.sonn, d.nacht, d.km, d.unt, d.sonstT, d.sonstB, d.notiz, d.u, c.total]));
+}
+
+/* ---------- Vertragstexte ---------- */
+function legalText(d) {
+  const u = d.u, c = calc(d), pr = Math.round(u.reservierung * 100);
+  return [
+    { h: "Gut zu wissen", p: [
+      `Die angegebene Dauer ist ein Richtwert. Dauert der Tag länger, berechnen wir jede weitere Stunde mit ${eur(u.std)} und jede angefangene halbe Stunde mit ${eur(u.halb)}. Bei Regen weichen wir für die Paarfotos gemeinsam ins Studio aus.` ] },
+    { h: "4. Terminreservierung und Zahlung", p: [
+      `Mit Unterzeichnung dieses Vertrages wird für die Terminreservierung ein Betrag von ${pr} % des Gesamtbetrages fällig (${eur(c.res)}), zahlbar innerhalb von 7 Tagen per Überweisung oder im Studio bar bzw. mit Karte. Erst mit Eingang der Terminreservierung ist der Termin verbindlich gebucht. Ab dann hält der Fotograf den Tag exklusiv für das Brautpaar frei und sagt andere Anfragen für diesen Tag ab. Die Terminreservierung wird vollständig auf den Gesamtbetrag angerechnet. Der Restbetrag ist am Hochzeitstag nach dem Shooting fällig (bar oder mit Karte) oder nach Absprache vorab per Überweisung.`,
+      `Bankverbindung: ${S.kontoinhaber} · ${S.bank} · IBAN ${S.iban} · BIC ${S.bic}`,
+      `Verwendungszweck für die Terminreservierung: ${vzweck(d)} – bitte genau so angeben (oder den GiroCode mit der Banking-App scannen).`,
+      `Alle Beträge sind Endpreise inklusive ${Math.round(u.mwst * 100)} % Mehrwertsteuer.` ] },
+    { h: "5. Bilder und Lieferung", p: [
+      "• Der Fotograf wählt die gelungenen Aufnahmen aus und bearbeitet sie. Bildauswahl, Bildstil und Bearbeitung liegen im künstlerischen Ermessen des Fotografen; unbearbeitete Rohdaten werden nicht herausgegeben.",
+      "• Die bearbeiteten Bilder erhält der Auftraggeber in der Regel innerhalb von 4 Wochen über eine passwortgeschützte Online-Galerie zum Download. Bitte ladet die Bilder zeitnah herunter und sichert sie.",
+      "• Fotoabzüge und Fotoprodukte sind nicht im Paket enthalten und können nach aktueller Preisliste zusätzlich bestellt werden." ] },
+    { h: "6. Nutzungsrechte und Urheberrecht", p: [
+      "Nach vollständiger Bezahlung erhält der Auftraggeber ein zeitlich unbegrenztes, einfaches Nutzungsrecht an den gelieferten Bildern für private Zwecke – dazu gehört auch das Teilen in privaten sozialen Netzwerken. Eine gewerbliche Nutzung oder Weitergabe an Dritte zu gewerblichen Zwecken (z. B. an Dienstleister, Zeitschriften oder Wettbewerbe) ist nur nach Absprache erlaubt. Das Urheberrecht verbleibt beim Fotografen." ] },
+    { h: "7. Veröffentlichung als Referenz", p: [
+      `Ob der Fotograf ausgewählte Bilder des Brautpaars als Referenz für die eigene Werbung verwenden darf (Website, Social Media, Studio, Portfolio), entscheidet das Brautpaar unten selbst. Die Einwilligung ist freiwillig und kann jederzeit für die Zukunft per E-Mail an ${S.mail} widerrufen werden. Gäste werden nur mit deren eigener Einwilligung veröffentlicht.` ] },
+    { h: "8. Absage, Krankheit und höhere Gewalt", p: [
+      `• Sagt der Auftraggeber den Termin ab oder tritt er vom Vertrag zurück, behält der Fotograf die Terminreservierung (${pr} % des Gesamtbetrages) als pauschale Ausfallentschädigung ein, da ein reservierter Hochzeitstermin in der Regel nicht mehr anderweitig vergeben werden kann. Ist die Terminreservierung zu diesem Zeitpunkt noch nicht bezahlt, ist sie trotzdem zu zahlen. Dem Auftraggeber bleibt der Nachweis vorbehalten, dass kein oder ein wesentlich geringerer Schaden entstanden ist.`,
+      "• Das gesetzliche Widerrufsrecht (siehe Widerrufsbelehrung) bleibt unberührt: Wird der Vertrag innerhalb der Widerrufsfrist widerrufen, erstattet der Fotograf alle Zahlungen einschließlich der Terminreservierung.",
+      "• Kann die Hochzeit aus Gründen höherer Gewalt (z. B. Unfall, schwere Krankheit) nicht stattfinden, verzichtet der Fotograf auf die Ausfallentschädigung, soweit ihm keine Kosten entstanden sind. Eine Trennung des Paares oder falsche Angaben zu Ort, Datum oder Uhrzeit gelten nicht als höhere Gewalt.",
+      "• Kann der Fotograf den Auftrag wegen Krankheit, Unfall oder höherer Gewalt nicht ausführen, bemüht er sich um einen gleichwertigen Ersatzfotografen. Gelingt das nicht, werden bereits geleistete Zahlungen einschließlich der Terminreservierung vollständig erstattet. Weitergehende Ansprüche bestehen nur bei Vorsatz oder grober Fahrlässigkeit; die Haftung für Schäden an Leben, Körper und Gesundheit bleibt unberührt.",
+      "• Wird die Hochzeit verlegt, versuchen wir, den neuen Termin möglich zu machen. Ist der Fotograf am neuen Termin bereits gebucht, gilt dies als Absage durch den Auftraggeber." ] },
+    { h: "9. Datenschutz und Gäste", p: [
+      "Der Fotograf verarbeitet die Daten des Brautpaars und die Aufnahmen der Hochzeit nur zur Durchführung dieses Vertrages (siehe Datenschutzhinweise). Das Brautpaar informiert seine Gäste vorab (z. B. mit der Einladung oder per Aushang), dass ein Fotograf anwesend ist. Gäste, die nicht fotografiert werden möchten, können dies dem Fotografen jederzeit sagen. Eine Unterschrift jedes einzelnen Gastes ist dafür nicht nötig." ] },
+    { h: "10. Vertragsschluss und Schlussbestimmungen", p: [
+      "Der Fotograf hat diesen Vertrag vorbereitet und dem Auftraggeber übermittelt. Mit der Unterschrift des Auftraggebers und der Rücksendung an den Fotografen ist der Vertrag geschlossen; verbindlich gebucht ist der Termin mit Eingang der Terminreservierung. Änderungen und Ergänzungen bedürfen der Textform (z. B. E-Mail). Sollte eine Bestimmung unwirksam sein, bleiben die übrigen Bestimmungen wirksam." ] }
+  ];
+}
+const WIDERRUF = () => [
+  { h: "Widerrufsbelehrung", p: [
+    "Widerrufsrecht",
+    "Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.",
+    `Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (${S.name}, ${S.inhaber}, ${S.strasse}, ${S.ort}, Telefon ${S.tel}, E-Mail ${S.mail}) mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.`,
+    "Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.",
+    "Folgen des Widerrufs",
+    "Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.",
+    "Haben Sie verlangt, dass die Dienstleistungen während der Widerrufsfrist beginnen sollen, so haben Sie uns einen angemessenen Betrag zu zahlen, der dem Anteil der bis zu dem Zeitpunkt, zu dem Sie uns von der Ausübung des Widerrufsrechts hinsichtlich dieses Vertrags unterrichten, bereits erbrachten Dienstleistungen im Vergleich zum Gesamtumfang der im Vertrag vorgesehenen Dienstleistungen entspricht." ] },
+  { h: "Muster-Widerrufsformular", p: [
+    "(Wenn Sie den Vertrag widerrufen wollen, dann füllen Sie bitte dieses Formular aus und senden Sie es zurück.)",
+    `An ${S.name}, ${S.inhaber}, ${S.strasse}, ${S.ort}, E-Mail ${S.mail}:`,
+    "Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über die Erbringung der folgenden Dienstleistung (*): ______________________",
+    "Bestellt am (*): __________   Name des/der Verbraucher(s): ______________________",
+    "Anschrift des/der Verbraucher(s): ______________________",
+    "Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier): ______________________   Datum: __________",
+    "(*) Unzutreffendes streichen." ] }
+];
+const DATENSCHUTZ = () => [
+  { h: "Datenschutzhinweise (Art. 13 DSGVO)", p: [] },
+  { h: "1. Verantwortlicher", p: [`${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} · Telefon ${S.tel} · E-Mail ${S.mail} · ${S.web}`] },
+  { h: "2. Welche Daten wir verarbeiten", p: ["Namen, Anschrift, Telefonnummer und E-Mail-Adresse des Brautpaars, Angaben zu Termin und Orten der Hochzeit, Zahlungsdaten, eure Unterschrift sowie die Fotos, die wir am Hochzeitstag aufnehmen. Auf diesen Fotos sind neben dem Brautpaar auch Gäste zu sehen."] },
+  { h: "3. Zwecke und Rechtsgrundlagen", p: [
+    "• Durchführung des Vertrages – Planung, Fotografie, Bearbeitung, Bereitstellung der Bilder, Abrechnung (Art. 6 Abs. 1 lit. b DSGVO).",
+    "• Erfüllung gesetzlicher Pflichten, z. B. Aufbewahrung von Rechnungen (Art. 6 Abs. 1 lit. c DSGVO).",
+    "• Fotos der Gäste im Rahmen der Hochzeitsreportage: berechtigtes Interesse des Brautpaars und des Fotografen an der Dokumentation der Hochzeit (Art. 6 Abs. 1 lit. f DSGVO). Die Bilder gehen nur an das Brautpaar.",
+    "• Veröffentlichung von Bildern als Referenz nur mit Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die jederzeit für die Zukunft widerrufen werden kann."] },
+  { h: "4. Wer die Daten erhält", p: ["Daten geben wir nur weiter, soweit das für den Auftrag oder gesetzlich nötig ist: an den Anbieter unserer passwortgeschützten Online-Galerie, an Fotolabore bei bestellten Abzügen oder Produkten, an Banken und Zahlungsdienstleister (z. B. bei Kartenzahlung) sowie an unsere Steuerberatung. Diese Vertragsseite speichert eure Eingaben nicht auf einem Server: Die PDF entsteht direkt auf eurem Gerät und erreicht uns nur per E-Mail. Bereitgestellt wird die Seite über GitHub Pages (GitHub Inc., USA). Beim Aufruf verarbeitet GitHub technisch notwendige Verbindungsdaten wie eure IP-Adresse; eure Vertragsdaten erhält GitHub nicht. GitHub ist nach dem EU-US Data Privacy Framework zertifiziert (Art. 45 DSGVO)."] },
+  { h: "5. Wie lange wir Daten speichern", p: ["Vertrags- und Rechnungsdaten bewahren wir so lange auf, wie es Handels- und Steuerrecht vorschreiben (HGB, AO – bis zu 10 Jahre). Die Bilddaten archivieren wir für Nachbestellungen bis zu 3 Jahre nach der Hochzeit und löschen sie danach, sofern nichts anderes vereinbart ist. Die Online-Galerie ist zeitlich begrenzt verfügbar."] },
+  { h: "6. Eure Rechte", p: [`Ihr habt das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20 DSGVO) sowie das Recht, eine Einwilligung jederzeit für die Zukunft zu widerrufen (Art. 7 Abs. 3 DSGVO). Eine E-Mail an ${S.mail} genügt. Außerdem könnt ihr euch bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO), z. B. beim Landesbeauftragten für Datenschutz und Informationsfreiheit Mecklenburg-Vorpommern, Werderstraße 74a, 19055 Schwerin.`] },
+  { h: "7. Widerspruchsrecht (Art. 21 DSGVO)", p: ["Soweit wir Daten auf Grundlage berechtigter Interessen verarbeiten (Art. 6 Abs. 1 lit. f DSGVO), könnt ihr – und auch jeder Gast – aus Gründen, die sich aus eurer besonderen Situation ergeben, jederzeit widersprechen. Gäste können dem Fotografen am Hochzeitstag einfach sagen, dass sie nicht fotografiert werden möchten. Einer Verarbeitung für Werbung könnt ihr jederzeit ohne Angabe von Gründen widersprechen."] },
+  { h: "8. Pflicht zur Angabe von Daten", p: ["Die im Vertrag abgefragten Kontaktdaten brauchen wir, um den Auftrag durchzuführen. Ohne sie können wir den Vertrag nicht abschließen. Eine automatisierte Entscheidungsfindung oder Profiling findet nicht statt."] },
+  { h: "Hinweis für eure Gäste – zum Weitergeben", p: [`Liebe Gäste, unsere Hochzeit wird von ${S.name} (${S.strasse}, ${S.ort}) fotografiert. Dabei entstehen auch Bilder, auf denen ihr zu sehen seid. Die Fotos erhalten nur wir als Brautpaar; veröffentlicht werden Bilder mit Gästen nur mit eurer Einwilligung. Wer nicht fotografiert werden möchte, sagt es bitte einfach dem Fotografen. Mehr Infos: ${S.mail}`] }
+];
+function legalHTML(blocks, asDetails, title) {
+  const inner = blocks.map(b => {
+    const ps = b.p.map(t => t.startsWith("• ") ? `<li>${esc(t.slice(2))}</li>` : `<p>${esc(t)}</p>`);
+    let out = "", inList = false;
+    ps.forEach(x => { if (x.startsWith("<li>") && !inList) { out += "<ul>"; inList = true; } if (!x.startsWith("<li>") && inList) { out += "</ul>"; inList = false; } out += x; });
+    if (inList) out += "</ul>";
+    return `<h3>${esc(b.h)}</h3>${out}`;
+  }).join("");
+  return asDetails ? `<details><summary>${esc(title)}</summary>${inner}</details>` : inner;
+}
+
+/* ============================================================
+   STUDIO
+   ============================================================ */
+const SF = ["n1","n2","str","ort","tel","mail","datum","zeit","trau","loc","pk","std","halb","sonn","nacht","km","unt","sonstT","sonstB","indP","indD","indL","notiz"];
+function studioData() {
+  const v = id => $("s_" + id).value.trim();
+  const pk = v("pk"), P = CONFIG.pakete[pk];
+  const isInd = pk === "ind";
+  return {
+    n1: v("n1"), n2: v("n2"), str: v("str"), ort: v("ort"), tel: v("tel"), mail: v("mail"),
+    datum: v("datum"), zeit: v("zeit"), trau: v("trau"), loc: v("loc"),
+    pkName: P.name, pkDauer: isInd ? (v("indD") || P.dauer) : P.dauer,
+    pkPreis: isInd ? r2(num(v("indP"))) : P.preis,
+    pkL: isInd ? v("indL").split("\n").map(s => s.trim()).filter(Boolean) : P.leistungen,
+    std: num(v("std")), halb: num(v("halb")), sonn: v("sonn") === "1", nacht: num(v("nacht")), km: num(v("km")),
+    unt: r2(num(v("unt"))), sonstT: v("sonstT"), sonstB: r2(num(v("sonstB"))), notiz: v("notiz"),
+    vd: today(), u: { ...CONFIG.preise },
+    vzName: ($("s_n1").value.trim().split(/\s+/).pop() || "")
+  };
+}
+function studioRender() {
+  $("indBox").hidden = $("s_pk").value !== "ind";
+  const d = studioData();
+  $("s_money").innerHTML = moneyRows(calc(d), d.u);
+  const draft = {}; SF.forEach(k => draft[k] = $("s_" + k).value); ls.set("fs_entwurf", draft);
+  $("s_out").hidden = true;
+}
+function studioList() {
+  const list = ls.get("fs_vertraege", []);
+  if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge verschickt. Nach „Link erstellen“ erscheinen sie hier.</td></tr>`; return; }
+  $("s_list").innerHTML = `<tr><th>Brautpaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Erstellt</th><th></th></tr>` +
+    list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
+      <td><a href="${esc(x.link)}" target="_blank" rel="noopener">Link</a> · <a href="#" data-del="${i}">Entfernen</a></td></tr>`).join("");
+}
+function initStudio() {
+  $("studio").hidden = false;
+  $("s_pk").innerHTML = Object.entries(CONFIG.pakete).map(([k, p]) => `<option value="${k}">${esc(p.name)}${p.preis ? " – " + eur(p.preis) : ""}</option>`).join("");
+  $("s_pk").value = "p2";
+  const draft = ls.get("fs_entwurf", null);
+  if (draft) SF.forEach(k => { if (draft[k] !== undefined) $("s_" + k).value = draft[k]; });
+  $("sf").addEventListener("input", studioRender);
+  $("sf").addEventListener("change", studioRender);
+  $("s_reset").addEventListener("click", () => { $("sf").reset(); $("s_pk").value = "p2"; studioRender(); });
+  $("sf").addEventListener("submit", e => {
+    e.preventDefault();
+    const d = studioData();
+    if (!d.n1 || !d.datum) { alert("Bitte mindestens Name 1 und das Hochzeitsdatum eintragen."); return; }
+    const base = location.href.split("#")[0];
+    const link = base + "#v=" + b64e(d);
+    const code = contractCode(d), c = calc(d);
+    $("s_code").textContent = code; $("s_vz").textContent = vzweck(d);
+    $("s_link").textContent = link;
+    $("s_preview").href = link;
+    const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, prüft eure Daten und unterschreibt direkt am Handy oder PC:\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
+    $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
+    $("s_out").hidden = false;
+    const list = ls.get("fs_vertraege", []).filter(x => x.code !== code);
+    list.unshift({ namen: names(d), datum: d.datum, total: c.total, code, vd: d.vd, link, vz: vzweck(d) });
+    ls.set("fs_vertraege", list.slice(0, 200));
+    studioList();
+    $("s_out").scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  $("s_copy").addEventListener("click", async () => {
+    const t = $("s_link").textContent;
+    try { await navigator.clipboard.writeText(t); $("s_copy").textContent = "Kopiert ✓"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents($("s_link")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("s_copy").textContent = "Markiert – jetzt kopieren"; }
+    setTimeout(() => $("s_copy").textContent = "Link kopieren", 2500);
+  });
+  $("s_list").addEventListener("click", e => {
+    const i = e.target.getAttribute("data-del"); if (i === null) return; e.preventDefault();
+    const list = ls.get("fs_vertraege", []); list.splice(+i, 1); ls.set("fs_vertraege", list); studioList();
+  });
+  studioRender(); studioList();
+}
+
+/* ============================================================
+   KUNDE
+   ============================================================ */
+let D = null;
+const pads = {};
+function makePad(id) {
+  const cv = $(id), ctx = cv.getContext("2d"); let drawing = false, last = null; const pad = { empty: true, cv };
+  function size() { const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const img = pad.empty ? null : cv.toDataURL(); cv.width = r.width * dpr; cv.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.lineWidth = 2.4; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#111";
+    if (img) { const im = new Image(); im.onload = () => ctx.drawImage(im, 0, 0, r.width, r.height); im.src = img; } }
+  const pos = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  cv.addEventListener("pointerdown", e => { drawing = true; last = pos(e); cv.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.arc(last.x, last.y, 1.1, 0, Math.PI * 2); ctx.fillStyle = "#111"; ctx.fill(); pad.empty = false; });
+  cv.addEventListener("pointermove", e => { if (!drawing) return; const p = pos(e); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; pad.empty = false; });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(t => cv.addEventListener(t, () => drawing = false));
+  pad.clear = () => { ctx.clearRect(0, 0, cv.width, cv.height); pad.empty = true; };
+  pad.size = size; size();
+  return pad;
+}
+function kundeData() {
+  const d = JSON.parse(JSON.stringify(D));
+  ["n1","n2","str","ort","tel","mail"].forEach(k => d[k] = $("k_" + k).value.trim());
+  return d;
+}
+function initKunde(data) {
+  D = data;
+  $("kunde").hidden = false;
+  $("k_title").textContent = "Hochzeitsvertrag" + (names(D) ? " – " + names(D) : "");
+  ["n1","n2","str","ort","tel","mail"].forEach(k => $("k_" + k).value = D[k] || "");
+  const t = [["Datum der Hochzeit", dDE(D.datum)], ["Beginn", D.zeit ? D.zeit + " Uhr" : "nach Absprache"], ["Trauung / Standesamt", D.trau], ["Weitere Location", D.loc]];
+  $("k_termin").innerHTML = t.filter(x => x[1]).map((x, i) => `<div><label for="kt${i}">${esc(x[0])}</label><input id="kt${i}" readonly value="${esc(x[1])}"></div>`).join("");
+  $("k_termin_hint").textContent = `Termin oder Ort falsch? Bitte nicht unterschreiben, sondern kurz anrufen: ${S.tel}.`;
+  $("k_paket").innerHTML = `<div class="pkg">${esc(D.pkName)} · ${esc(D.pkDauer)} · ${eur(D.pkPreis)}</div><ul class="leist">${D.pkL.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
+    (D.notiz ? `<h3>Zusätzliche Vereinbarungen</h3><p>${esc(D.notiz).replace(/\n/g, "<br>")}</p>` : "");
+  $("k_money").innerHTML = moneyRows(calc(D), D.u);
+  $("k_code").textContent = contractCode(D);
+  $("k_pay").innerHTML = payHTML(D);
+  $("k_legal").innerHTML = `<h2>Vertragsbedingungen</h2>` + legalHTML(legalText(D), false) +
+    legalHTML(WIDERRUF(), true, "Widerrufsbelehrung & Muster-Widerrufsformular") + legalHTML(DATENSCHUTZ(), true, "Datenschutzhinweise");
+  $("k_ortU").value = (D.ort || "").replace(/^\d{5}\s*/, "");
+  $("k_datU").value = dDE(today());
+  pads.A = makePad("padA"); pads.B = makePad("padB");
+  const upd = () => { $("sigA_name").textContent = "Unterschrift " + ($("k_n1").value || "Auftraggeber");
+    $("sigB_name").textContent = "Unterschrift " + ($("k_n2").value || ""); $("sigB").hidden = !$("k_n2").value.trim(); };
+  ["k_n1","k_n2"].forEach(id => $(id).addEventListener("input", upd)); upd();
+  document.querySelectorAll("[data-clear]").forEach(b => b.addEventListener("click", () => pads[b.dataset.clear].clear()));
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { pads.A.size(); pads.B.size(); }, 150); });
+  $("k_sign").addEventListener("click", sign);
+}
+async function sign() {
+  const d = kundeData(), err = [];
+  if (!d.n1) err.push("Name 1 fehlt.");
+  if (!$("k_ok1").checked || !$("k_ok2").checked) err.push("Bitte beide Häkchen setzen.");
+  const ref = document.querySelector('input[name="ref"]:checked');
+  if (!ref) err.push("Bitte bei „Veröffentlichung als Referenz“ Ja oder Nein wählen.");
+  if (!$("k_ortU").value.trim()) err.push("Bitte den Ort eintragen.");
+  if (pads.A.empty) err.push(`Unterschrift von ${d.n1 || "Name 1"} fehlt.`);
+  if (d.n2 && pads.B.empty) err.push(`Unterschrift von ${d.n2} fehlt.`);
+  if (err.length) { $("k_err").innerHTML = err.map(esc).join("<br>"); $("k_err").hidden = false; return; }
+  $("k_err").hidden = true;
+  $("k_sign").disabled = true; $("k_sign").textContent = "PDF wird erstellt …";
+  try {
+    const blob = await buildPDF(d, { ref: ref.value, ort: $("k_ortU").value.trim(), datum: $("k_datU").value,
+      sigA: pads.A.cv.toDataURL("image/png"), sigB: d.n2 ? pads.B.cv.toDataURL("image/png") : null,
+      ts: new Date().toLocaleString("de-DE"), ratio: pads.A.cv.height / pads.A.cv.width });
+    const fname = `Hochzeitsvertrag_${(d.n1 || "").split(" ").pop()}_${d.datum}.pdf`.replace(/[^\wäöüÄÖÜß.\-]/g, "_");
+    const file = new File([blob], fname, { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    $("k_dl").href = url; $("k_dl").setAttribute("download", fname);
+    $("k_mailto_txt").textContent = S.mail;
+    const subj = `Unterschriebener Hochzeitsvertrag – ${names(d)} – ${dDE(d.datum)}`;
+    $("k_mailbtn").href = `mailto:${S.mail}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent("Hallo Foto Schuh,\n\nanbei unser unterschriebener Hochzeitsvertrag (PDF im Anhang).\n\nViele Grüße\n" + names(d))}`;
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      $("k_share").hidden = false;
+      $("k_share").onclick = () => navigator.share({ files: [file], title: subj, text: `An ${S.mail}: ${subj}` }).catch(() => {});
+    }
+    const c = calc(d);
+    $("k_payhint").textContent = `Nicht vergessen: Terminreservierung ${eur(c.res)} innerhalb von 7 Tagen überweisen – Verwendungszweck: ${vzweck(d)}`;
+    $("k_done").hidden = false;
+    $("k_sign").textContent = "Erneut erstellen"; $("k_sign").disabled = false;
+    $("k_done").scrollIntoView({ behavior: "smooth", block: "center" });
+  } catch (e) {
+    console.error(e);
+    $("k_err").textContent = "Die PDF konnte nicht erstellt werden. Bitte versucht es mit einem anderen Browser oder ruft uns an: " + S.tel;
+    $("k_err").hidden = false; $("k_sign").disabled = false; $("k_sign").textContent = "Unterschreiben & PDF erstellen";
+  }
+}
+
+function payHTML(d) {
+  const c = calc(d);
+  return `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+    <div style="flex:none;background:#fff;padding:4px;border-radius:6px">${qrSVG(epcQR(c.res, vzweck(d)), 132)}</div>
+    <div style="min-width:0;flex:1 1 220px;font-size:14px;line-height:1.55">
+      <strong>Terminreservierung ${eur(c.res)}</strong> – bitte innerhalb von 7 Tagen überweisen.<br>
+      Empfänger: ${esc(S.kontoinhaber)}<br>IBAN: <span class="code">${esc(S.iban)}</span><br>BIC: ${esc(S.bic)}<br>
+      Verwendungszweck: <strong>${esc(vzweck(d))}</strong><br>
+      <span class="note">Tipp: GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon drin.</span></div></div>`;
+}
+
+/* ---------- PDF ---------- */
+async function logoData() {
+  try { const r = await fetch("logo.png"); const b = await r.blob();
+    return await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b); }); }
+  catch (e) { return null; }
+}
+async function buildPDF(d, s) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const M = 18, W = 210 - 2 * M, BOTTOM = 280;
+  const ORANGE = [232, 117, 0];
+  const code = contractCode(d);
+  let y = M;
+  const font = (size, style = "normal", color = [30, 28, 26]) => { doc.setFont("helvetica", style); doc.setFontSize(size); doc.setTextColor(...color); };
+  const need = h => { if (y + h > BOTTOM) { doc.addPage(); y = M; } };
+  const lh = size => size * 0.42;
+  const para = (t, size = 9.5, style = "normal", indent = 0, color) => {
+    font(size, style, color); const lines = doc.splitTextToSize(t, W - indent);
+    lines.forEach(l => { need(lh(size)); doc.text(l, M + indent, y + lh(size) * 0.8); y += lh(size); }); y += 1.2;
+  };
+  const bullet = (t, size = 9.5) => {
+    font(size); const lines = doc.splitTextToSize(t, W - 5);
+    lines.forEach((l, i) => { need(lh(size)); if (i === 0) doc.text("•", M + 1, y + lh(size) * 0.8); doc.text(l, M + 5, y + lh(size) * 0.8); y += lh(size); }); y += 1;
+  };
+  const head = (t, size = 11) => { need(12); y += 2.5; font(size, "bold", ORANGE); doc.text(t, M, y + 4); y += 6.5; };
+  const kv = (k, v) => { need(6); font(9.5, "normal", [110, 100, 94]); doc.text(k, M, y + 4); font(9.5, "bold");
+    const lines = doc.splitTextToSize(v || "–", W - 52); doc.text(lines, M + 52, y + 4); y += Math.max(1, lines.length) * 4.3 + 1.2; };
+  const blocks = bl => bl.forEach(b => { head(b.h, 10.5); b.p.forEach(t => t.startsWith("• ") ? bullet(t.slice(2)) : para(t)); });
+
+  const logo = await logoData();
+  if (logo) doc.addImage(logo, "PNG", M, y, 40, 23.4);
+  font(8.5, "normal", [110, 100, 94]);
+  [`${S.name} · ${S.strasse} · ${S.ort}`, `Tel. ${S.tel} · ${S.mail}`, S.web].forEach((t, i) => doc.text(t, 210 - M, y + 5 + i * 4.2, { align: "right" }));
+  y += 30;
+  font(18, "bold", ORANGE); doc.text("VERTRAG – Hochzeitsfotografie", M, y + 6); y += 11;
+  para(`zwischen ${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} (im Folgenden „Fotograf“) und dem Brautpaar (im Folgenden „Auftraggeber“):`);
+  y += 1;
+  kv("Name", d.n1); if (d.n2) kv("Name", d.n2);
+  kv("Anschrift", [d.str, d.ort].filter(Boolean).join(", ")); kv("Telefon", d.tel); kv("E-Mail", d.mail);
+  head("1. Termin und Ort");
+  kv("Datum der Hochzeit", dDE(d.datum)); kv("Beginn", d.zeit ? d.zeit + " Uhr" : "nach Absprache");
+  if (d.trau) kv("Trauung / Standesamt", d.trau); if (d.loc) kv("Weitere Location", d.loc);
+  head("2. Gebuchte Leistung");
+  para(`${d.pkName} · ${d.pkDauer} · ${eur(d.pkPreis)}`, 10, "bold");
+  d.pkL.forEach(x => bullet(x));
+  if (d.notiz) { y += 1; para("Zusätzliche Vereinbarungen:", 9.5, "bold"); para(d.notiz); }
+  head("3. Vergütung");
+  const c = calc(d);
+  const row = (a, b, amt, bold) => { need(6); font(9.5, bold ? "bold" : "normal"); doc.text(a, M, y + 4);
+    font(8.5, "normal", [110, 100, 94]); if (b) doc.text(b, M + 62, y + 4); font(bold ? 10.5 : 9.5, bold ? "bold" : "normal");
+    doc.text(amt, 210 - M, y + 4, { align: "right" }); y += 5.6; doc.setDrawColor(220); doc.line(M, y, 210 - M, y); y += 0.6; };
+  c.L.forEach(x => row(x.label, x.info, eur(x.amt)));
+  doc.setDrawColor(30); row("Gesamtbetrag", "", eur(c.total), true);
+  row(`Terminreservierung (${Math.round(d.u.reservierung * 100)} %)`, "fällig innerhalb von 7 Tagen", eur(c.res));
+  row("Restbetrag", "am Hochzeitstag nach dem Shooting", eur(c.rest));
+  row(`enthaltene MwSt. (${Math.round(d.u.mwst * 100)} %)`, "", eur(c.mwst));
+  need(36); y += 3;
+  const q = epcQR(c.res, vzweck(d)), nmod = q.getModuleCount(), qs = 30, cell = qs / nmod;
+  doc.setFillColor(0, 0, 0);
+  for (let r = 0; r < nmod; r++) for (let cc = 0; cc < nmod; cc++) if (q.isDark(r, cc)) doc.rect(M + cc * cell, y + r * cell, cell + 0.02, cell + 0.02, "F");
+  const tx = M + qs + 6; let ty = y + 3;
+  font(9.5, "bold"); doc.text(`Überweisung Terminreservierung: ${eur(c.res)} innerhalb von 7 Tagen`, tx, ty); ty += 5;
+  font(9);
+  [`Empfänger: ${S.kontoinhaber}`, `IBAN: ${S.iban} · BIC: ${S.bic} · ${S.bank}`].forEach(t => { doc.text(t, tx, ty); ty += 4.4; });
+  font(9, "bold"); doc.text(doc.splitTextToSize(`Verwendungszweck: ${vzweck(d)}`, W - qs - 6), tx, ty); ty += 8.5;
+  font(8, "normal", [110, 100, 94]); doc.text("GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon eingetragen.", tx, ty);
+  y += qs + 2;
+  blocks(legalText(d));
+  head("Einwilligung Referenz");
+  para(s.ref === "ja" ? "[X] Ja, wir sind einverstanden, dass ausgewählte Bilder als Referenz veröffentlicht werden.   [ ] Nein"
+                      : "[ ] Ja   [X] Nein, bitte keine Bilder von uns als Referenz veröffentlichen.", 9.5, "bold");
+  head("Bestätigung und Unterschrift");
+  para("[X] Wir haben unsere Daten geprüft und den Vertrag gelesen.   [X] Wir haben die Widerrufsbelehrung und die Datenschutzhinweise zur Kenntnis genommen.");
+  need(42); y += 2;
+  const sigW = (W - 10) / 2;
+  const sig = (img, x, name) => { if (img) { const h = Math.min(26, sigW * s.ratio), w = h / s.ratio; doc.addImage(img, "PNG", x, y + 26 - h, w, h); }
+    doc.setDrawColor(30); doc.line(x, y + 27, x + sigW, y + 27); font(8.5, "normal", [110, 100, 94]); doc.text(name, x, y + 31); };
+  sig(s.sigA, M, `${d.n1} · ${s.ort}, ${s.datum}`);
+  if (s.sigB) sig(s.sigB, M + sigW + 10, `${d.n2} · ${s.ort}, ${s.datum}`);
+  y += 36;
+  para(`Für den Fotografen: ${S.name} – ${S.inhaber}, vorbereitet am ${dDE(d.vd)}. Elektronisch unterschrieben am ${s.ts}.`, 8.5, "normal", 0, [110, 100, 94]);
+  doc.addPage(); y = M; blocks(WIDERRUF());
+  doc.addPage(); y = M; blocks(DATENSCHUTZ());
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) { doc.setPage(i); font(7.5, "normal", [140, 130, 120]);
+    doc.text(`${S.name} · Hochzeitsvertrag ${names(d)} · Vertragsnummer ${code} · Seite ${i} von ${n}`, 105, 290, { align: "center" }); }
+  return doc.output("blob");
+}
+
+/* ---------- Start ---------- */
+$("kopf").innerHTML = `${esc(S.strasse)} · ${esc(S.ort)}<br>${esc(S.tel)} · ${esc(S.mail)}`;
+function boot() {
+  ["studio", "kunde", "fehler"].forEach(id => $(id).hidden = true);
+  const m = location.hash.match(/^#v=(.+)$/);
+  if (m) { try { const d = b64d(m[1]); if (!d.pkName || !d.u) throw 0; initKunde(d); } catch (e) { $("fehler").hidden = false; } }
+  else initStudio();
+}
+window.addEventListener("hashchange", () => location.reload());
+boot();
+</script>
+</body>
+</html>

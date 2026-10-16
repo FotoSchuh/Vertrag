@@ -1,0 +1,15 @@
+Hochzeitsvertrag-App – Foto Schuh
+
+Dateien (alle vier gehören zusammen in denselben Ordner):
+  index.html            die App
+  logo.png              euer Logo (für Seite und PDF)
+  jspdf.umd.min.js      erstellt die PDF (lokal mitgeliefert, damit kein fremder Server geladen wird)
+  qrcode.js             erstellt den GiroCode für die Überweisung
+
+Preise, Pakete, Bankverbindung ändern:
+  index.html öffnen, ganz oben im Skript steht der Block "EINSTELLUNGEN".
+  Bereits verschickte Links behalten ihre alten Preise.
+
+Benutzung:
+  Studio:  die Seite ohne Zusatz öffnen (z. B. https://vertrag.foto-schuh.de/)
+  Kunde:   bekommt den Link mit #v=... aus eurer Mail
