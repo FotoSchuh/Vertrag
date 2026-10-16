@@ -103,12 +103,11 @@ details[open] summary{margin-bottom:8px}
 
   <!-- ===================== STUDIO ===================== -->
   <main id="studio" hidden>
-    <span class="badge">Studio</span>
     <h1>Hochzeitsvertrag vorbereiten</h1>
-    <p class="lead">Daten eintragen, Link per Mail ans Brautpaar schicken. Das Paar prüft alles, unterschreibt am Handy oder PC und schickt euch die fertige PDF zurück.</p>
+    <p class="lead">Daten eintragen, Link per Mail ans Hochzeitspaar schicken. Das Paar prüft alles, unterschreibt am Handy oder PC und schickt euch die fertige PDF zurück.</p>
 
     <form id="sf" class="card" autocomplete="off">
-      <h2>Brautpaar</h2>
+      <h2>Hochzeitspaar</h2>
       <div class="grid">
         <div><label for="s_n1">Name 1</label><input id="s_n1" required></div>
         <div><label for="s_n2">Name 2</label><input id="s_n2"></div>
@@ -161,9 +160,9 @@ details[open] summary{margin-bottom:8px}
         <p class="note" style="margin-top:10px">Verwendungszweck für die Terminreservierung: <strong id="s_vz"></strong></p>
         <div class="linkbox" id="s_link"></div>
         <div class="actions">
-          <a class="btn" id="s_mailbtn" href="#">Per Mail ans Brautpaar</a>
+          <a class="btn" id="s_mailbtn" href="#">Per Mail ans Hochzeitspaar</a>
           <button type="button" class="ghost" id="s_copy">Link kopieren</button>
-          <a class="btn ghost" id="s_preview" href="#" target="_blank" rel="noopener">Ansicht wie beim Brautpaar</a>
+          <a class="btn ghost" id="s_preview" href="#" target="_blank" rel="noopener">Ansicht wie beim Hochzeitspaar</a>
         </div>
       </div>
     </form>
@@ -370,7 +369,7 @@ function legalText(d) {
     { h: "Gut zu wissen", p: [
       `Die angegebene Dauer ist ein Richtwert. Dauert der Tag länger, berechnen wir jede weitere Stunde mit ${eur(u.std)} und jede angefangene halbe Stunde mit ${eur(u.halb)}. Bei Regen weichen wir für die Paarfotos gemeinsam ins Studio aus.` ] },
     { h: "4. Terminreservierung und Zahlung", p: [
-      `Mit Unterzeichnung dieses Vertrages wird für die Terminreservierung ein Betrag von ${pr} % des Gesamtbetrages fällig (${eur(c.res)}), zahlbar innerhalb von 7 Tagen per Überweisung oder im Studio bar bzw. mit Karte. Erst mit Eingang der Terminreservierung ist der Termin verbindlich gebucht. Ab dann hält der Fotograf den Tag exklusiv für das Brautpaar frei und sagt andere Anfragen für diesen Tag ab. Die Terminreservierung wird vollständig auf den Gesamtbetrag angerechnet. Der Restbetrag ist am Hochzeitstag nach dem Shooting fällig (bar oder mit Karte) oder nach Absprache vorab per Überweisung.`,
+      `Mit Unterzeichnung dieses Vertrages wird für die Terminreservierung ein Betrag von ${pr} % des Gesamtbetrages fällig (${eur(c.res)}), zahlbar innerhalb von 7 Tagen per Überweisung oder im Studio bar bzw. mit Karte. Erst mit Eingang der Terminreservierung ist der Termin verbindlich gebucht. Ab dann hält der Fotograf den Tag exklusiv für das Hochzeitspaar frei und sagt andere Anfragen für diesen Tag ab. Die Terminreservierung wird vollständig auf den Gesamtbetrag angerechnet. Der Restbetrag ist am Hochzeitstag nach dem Shooting fällig (bar oder mit Karte) oder nach Absprache vorab per Überweisung.`,
       `Bankverbindung: ${S.kontoinhaber} · ${S.bank} · IBAN ${S.iban} · BIC ${S.bic}`,
       `Verwendungszweck für die Terminreservierung: ${vzweck(d)} – bitte genau so angeben (oder den GiroCode mit der Banking-App scannen).`,
       `Alle Beträge sind Endpreise inklusive ${Math.round(u.mwst * 100)} % Mehrwertsteuer.` ] },
@@ -381,7 +380,7 @@ function legalText(d) {
     { h: "6. Nutzungsrechte und Urheberrecht", p: [
       "Nach vollständiger Bezahlung erhält der Auftraggeber ein zeitlich unbegrenztes, einfaches Nutzungsrecht an den gelieferten Bildern für private Zwecke – dazu gehört auch das Teilen in privaten sozialen Netzwerken. Eine gewerbliche Nutzung oder Weitergabe an Dritte zu gewerblichen Zwecken (z. B. an Dienstleister, Zeitschriften oder Wettbewerbe) ist nur nach Absprache erlaubt. Das Urheberrecht verbleibt beim Fotografen." ] },
     { h: "7. Veröffentlichung als Referenz", p: [
-      `Ob der Fotograf ausgewählte Bilder des Brautpaars als Referenz für die eigene Werbung verwenden darf (Website, Social Media, Studio, Portfolio), entscheidet das Brautpaar unten selbst. Die Einwilligung ist freiwillig und kann jederzeit für die Zukunft per E-Mail an ${S.mail} widerrufen werden. Gäste werden nur mit deren eigener Einwilligung veröffentlicht.` ] },
+      `Ob der Fotograf ausgewählte Bilder des Hochzeitspaars als Referenz für die eigene Werbung verwenden darf (Website, Social Media, Studio, Portfolio), entscheidet das Hochzeitspaar unten selbst. Die Einwilligung ist freiwillig und kann jederzeit für die Zukunft per E-Mail an ${S.mail} widerrufen werden. Gäste werden nur mit deren eigener Einwilligung veröffentlicht.` ] },
     { h: "8. Absage, Krankheit und höhere Gewalt", p: [
       `• Sagt der Auftraggeber den Termin ab oder tritt er vom Vertrag zurück, behält der Fotograf die Terminreservierung (${pr} % des Gesamtbetrages) als pauschale Ausfallentschädigung ein, da ein reservierter Hochzeitstermin in der Regel nicht mehr anderweitig vergeben werden kann. Ist die Terminreservierung zu diesem Zeitpunkt noch nicht bezahlt, ist sie trotzdem zu zahlen. Dem Auftraggeber bleibt der Nachweis vorbehalten, dass kein oder ein wesentlich geringerer Schaden entstanden ist.`,
       "• Das gesetzliche Widerrufsrecht (siehe Widerrufsbelehrung) bleibt unberührt: Wird der Vertrag innerhalb der Widerrufsfrist widerrufen, erstattet der Fotograf alle Zahlungen einschließlich der Terminreservierung.",
@@ -389,7 +388,7 @@ function legalText(d) {
       "• Kann der Fotograf den Auftrag wegen Krankheit, Unfall oder höherer Gewalt nicht ausführen, bemüht er sich um einen gleichwertigen Ersatzfotografen. Gelingt das nicht, werden bereits geleistete Zahlungen einschließlich der Terminreservierung vollständig erstattet. Weitergehende Ansprüche bestehen nur bei Vorsatz oder grober Fahrlässigkeit; die Haftung für Schäden an Leben, Körper und Gesundheit bleibt unberührt.",
       "• Wird die Hochzeit verlegt, versuchen wir, den neuen Termin möglich zu machen. Ist der Fotograf am neuen Termin bereits gebucht, gilt dies als Absage durch den Auftraggeber." ] },
     { h: "9. Datenschutz und Gäste", p: [
-      "Der Fotograf verarbeitet die Daten des Brautpaars und die Aufnahmen der Hochzeit nur zur Durchführung dieses Vertrages (siehe Datenschutzhinweise). Das Brautpaar informiert seine Gäste vorab (z. B. mit der Einladung oder per Aushang), dass ein Fotograf anwesend ist. Gäste, die nicht fotografiert werden möchten, können dies dem Fotografen jederzeit sagen. Eine Unterschrift jedes einzelnen Gastes ist dafür nicht nötig." ] },
+      "Der Fotograf verarbeitet die Daten des Hochzeitspaars und die Aufnahmen der Hochzeit nur zur Durchführung dieses Vertrages (siehe Datenschutzhinweise). Das Hochzeitspaar informiert seine Gäste vorab (z. B. mit der Einladung oder per Aushang), dass ein Fotograf anwesend ist. Gäste, die nicht fotografiert werden möchten, können dies dem Fotografen jederzeit sagen. Eine Unterschrift jedes einzelnen Gastes ist dafür nicht nötig." ] },
     { h: "10. Vertragsschluss und Schlussbestimmungen", p: [
       "Der Fotograf hat diesen Vertrag vorbereitet und dem Auftraggeber übermittelt. Mit der Unterschrift des Auftraggebers und der Rücksendung an den Fotografen ist der Vertrag geschlossen; verbindlich gebucht ist der Termin mit Eingang der Terminreservierung. Änderungen und Ergänzungen bedürfen der Textform (z. B. E-Mail). Sollte eine Bestimmung unwirksam sein, bleiben die übrigen Bestimmungen wirksam." ] }
   ];
@@ -415,18 +414,18 @@ const WIDERRUF = () => [
 const DATENSCHUTZ = () => [
   { h: "Datenschutzhinweise (Art. 13 DSGVO)", p: [] },
   { h: "1. Verantwortlicher", p: [`${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} · Telefon ${S.tel} · E-Mail ${S.mail} · ${S.web}`] },
-  { h: "2. Welche Daten wir verarbeiten", p: ["Namen, Anschrift, Telefonnummer und E-Mail-Adresse des Brautpaars, Angaben zu Termin und Orten der Hochzeit, Zahlungsdaten, eure Unterschrift sowie die Fotos, die wir am Hochzeitstag aufnehmen. Auf diesen Fotos sind neben dem Brautpaar auch Gäste zu sehen."] },
+  { h: "2. Welche Daten wir verarbeiten", p: ["Namen, Anschrift, Telefonnummer und E-Mail-Adresse des Hochzeitspaars, Angaben zu Termin und Orten der Hochzeit, Zahlungsdaten, eure Unterschrift sowie die Fotos, die wir am Hochzeitstag aufnehmen. Auf diesen Fotos sind neben dem Hochzeitspaar auch Gäste zu sehen."] },
   { h: "3. Zwecke und Rechtsgrundlagen", p: [
     "• Durchführung des Vertrages – Planung, Fotografie, Bearbeitung, Bereitstellung der Bilder, Abrechnung (Art. 6 Abs. 1 lit. b DSGVO).",
     "• Erfüllung gesetzlicher Pflichten, z. B. Aufbewahrung von Rechnungen (Art. 6 Abs. 1 lit. c DSGVO).",
-    "• Fotos der Gäste im Rahmen der Hochzeitsreportage: berechtigtes Interesse des Brautpaars und des Fotografen an der Dokumentation der Hochzeit (Art. 6 Abs. 1 lit. f DSGVO). Die Bilder gehen nur an das Brautpaar.",
+    "• Fotos der Gäste im Rahmen der Hochzeitsreportage: berechtigtes Interesse des Hochzeitspaars und des Fotografen an der Dokumentation der Hochzeit (Art. 6 Abs. 1 lit. f DSGVO). Die Bilder gehen nur an das Hochzeitspaar.",
     "• Veröffentlichung von Bildern als Referenz nur mit Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die jederzeit für die Zukunft widerrufen werden kann."] },
   { h: "4. Wer die Daten erhält", p: ["Daten geben wir nur weiter, soweit das für den Auftrag oder gesetzlich nötig ist: an den Anbieter unserer passwortgeschützten Online-Galerie, an Fotolabore bei bestellten Abzügen oder Produkten, an Banken und Zahlungsdienstleister (z. B. bei Kartenzahlung) sowie an unsere Steuerberatung. Diese Vertragsseite speichert eure Eingaben nicht auf einem Server: Die PDF entsteht direkt auf eurem Gerät und erreicht uns nur per E-Mail. Bereitgestellt wird die Seite über GitHub Pages (GitHub Inc., USA). Beim Aufruf verarbeitet GitHub technisch notwendige Verbindungsdaten wie eure IP-Adresse; eure Vertragsdaten erhält GitHub nicht. GitHub ist nach dem EU-US Data Privacy Framework zertifiziert (Art. 45 DSGVO)."] },
   { h: "5. Wie lange wir Daten speichern", p: ["Vertrags- und Rechnungsdaten bewahren wir so lange auf, wie es Handels- und Steuerrecht vorschreiben (HGB, AO – bis zu 10 Jahre). Die Bilddaten archivieren wir für Nachbestellungen bis zu 3 Jahre nach der Hochzeit und löschen sie danach, sofern nichts anderes vereinbart ist. Die Online-Galerie ist zeitlich begrenzt verfügbar."] },
   { h: "6. Eure Rechte", p: [`Ihr habt das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20 DSGVO) sowie das Recht, eine Einwilligung jederzeit für die Zukunft zu widerrufen (Art. 7 Abs. 3 DSGVO). Eine E-Mail an ${S.mail} genügt. Außerdem könnt ihr euch bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO), z. B. beim Landesbeauftragten für Datenschutz und Informationsfreiheit Mecklenburg-Vorpommern, Werderstraße 74a, 19055 Schwerin.`] },
   { h: "7. Widerspruchsrecht (Art. 21 DSGVO)", p: ["Soweit wir Daten auf Grundlage berechtigter Interessen verarbeiten (Art. 6 Abs. 1 lit. f DSGVO), könnt ihr – und auch jeder Gast – aus Gründen, die sich aus eurer besonderen Situation ergeben, jederzeit widersprechen. Gäste können dem Fotografen am Hochzeitstag einfach sagen, dass sie nicht fotografiert werden möchten. Einer Verarbeitung für Werbung könnt ihr jederzeit ohne Angabe von Gründen widersprechen."] },
   { h: "8. Pflicht zur Angabe von Daten", p: ["Die im Vertrag abgefragten Kontaktdaten brauchen wir, um den Auftrag durchzuführen. Ohne sie können wir den Vertrag nicht abschließen. Eine automatisierte Entscheidungsfindung oder Profiling findet nicht statt."] },
-  { h: "Hinweis für eure Gäste – zum Weitergeben", p: [`Liebe Gäste, unsere Hochzeit wird von ${S.name} (${S.strasse}, ${S.ort}) fotografiert. Dabei entstehen auch Bilder, auf denen ihr zu sehen seid. Die Fotos erhalten nur wir als Brautpaar; veröffentlicht werden Bilder mit Gästen nur mit eurer Einwilligung. Wer nicht fotografiert werden möchte, sagt es bitte einfach dem Fotografen. Mehr Infos: ${S.mail}`] }
+  { h: "Hinweis für eure Gäste – zum Weitergeben", p: [`Liebe Gäste, unsere Hochzeit wird von ${S.name} (${S.strasse}, ${S.ort}) fotografiert. Dabei entstehen auch Bilder, auf denen ihr zu sehen seid. Die Fotos erhalten nur wir als Hochzeitspaar; veröffentlicht werden Bilder mit Gästen nur mit eurer Einwilligung. Wer nicht fotografiert werden möchte, sagt es bitte einfach dem Fotografen. Mehr Infos: ${S.mail}`] }
 ];
 function legalHTML(blocks, asDetails, title) {
   const inner = blocks.map(b => {
@@ -469,7 +468,7 @@ function studioRender() {
 function studioList() {
   const list = ls.get("fs_vertraege", []);
   if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge verschickt. Nach „Link erstellen“ erscheinen sie hier.</td></tr>`; return; }
-  $("s_list").innerHTML = `<tr><th>Brautpaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Erstellt</th><th></th></tr>` +
+  $("s_list").innerHTML = `<tr><th>Hochzeitspaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Erstellt</th><th></th></tr>` +
     list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
       <td><a href="${esc(x.link)}" target="_blank" rel="noopener">Link</a> · <a href="#" data-del="${i}">Entfernen</a></td></tr>`).join("");
 }
@@ -648,7 +647,7 @@ async function buildPDF(d, s) {
   [`${S.name} · ${S.strasse} · ${S.ort}`, `Tel. ${S.tel} · ${S.mail}`, S.web].forEach((t, i) => doc.text(t, 210 - M, y + 5 + i * 4.2, { align: "right" }));
   y += 30;
   font(18, "bold", ORANGE); doc.text("VERTRAG – Hochzeitsfotografie", M, y + 6); y += 11;
-  para(`zwischen ${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} (im Folgenden „Fotograf“) und dem Brautpaar (im Folgenden „Auftraggeber“):`);
+  para(`zwischen ${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} (im Folgenden „Fotograf“) und dem Hochzeitspaar (im Folgenden „Auftraggeber“):`);
   y += 1;
   kv("Name", d.n1); if (d.n2) kv("Name", d.n2);
   kv("Anschrift", [d.str, d.ort].filter(Boolean).join(", ")); kv("Telefon", d.tel); kv("E-Mail", d.mail);
