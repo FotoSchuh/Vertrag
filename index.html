@@ -119,6 +119,7 @@ details[open] summary{margin-bottom:8px}
     </section>
 
     <form id="sf" class="card" autocomplete="off">
+      <div class="msg" id="s_editbar" hidden style="margin:0 0 16px">Du bearbeitest den Vertrag <strong id="s_editname"></strong>. Der Link für das Paar bleibt gleich. <a href="#" id="s_editcancel">Abbrechen</a></div>
       <h2>Hochzeitspaar</h2>
       <div class="grid">
         <div><label for="s_n1">Name 1</label><input id="s_n1" required></div>
@@ -181,7 +182,7 @@ details[open] summary{margin-bottom:8px}
 
     <section class="card">
       <h2>Verschickte Verträge</h2>
-      <p class="note">Nur auf diesem Gerät gespeichert. Vergleicht die Vertragsnummer auf der zurückgeschickten PDF mit dieser Liste.</p>
+      <p class="note">Auf allen Geräten gleich, auf denen der Zugangsschlüssel eingetragen ist. Vergleicht die Vertragsnummer auf der zurückgeschickten PDF mit dieser Liste.</p>
       <div class="scroll"><table class="list" id="s_list"></table></div>
     </section>
   </main>
@@ -277,13 +278,13 @@ details[open] summary{margin-bottom:8px}
    ============================================================ */
 const CONFIG = {
   studio: {
-    name: "Foto Schuh", inhaber: "Kay-Alexander Schuh",
+    name: "Foto Schuh", inhaber: "Alexander Kay Schuh",
     strasse: "Lübecker Straße 53", ort: "19053 Schwerin",
     tel: "0385 / 593 85 444", mail: "info@foto-schuh.de", web: "www.foto-schuh.de",
     kontoinhaber: "Alexander Schuh",   // genau wie bei der Bank hinterlegt (Empfängerprüfung!)
     bank: "Sparkasse Neubrandenburg-Demmin", iban: "DE09 1505 0200 0301 0150 23", bic: "NOLADE21NBS"
   },
-  github: { owner: "FotoSchuh", repo: "Vertrag", branch: "main" },
+  github: { owner: "FotoSchuh", repo: "Vertrag", dataRepo: "Vertrag-Daten", branch: "main" },
   preise: { std: 99, halb: 49.5, km: 0.90, zuschlag: 0.35, reservierung: 0.50, mwst: 0.19 },
   pakete: {
     p1: { name: "Paket 1", dauer: "ca. 2 Stunden", preis: 299, leistungen: [
@@ -336,14 +337,15 @@ async function decryptData(file, raw) {
 }
 const G = CONFIG.github;
 const ghToken = () => ls.get("fs_token", "");
-async function gh(method, path, body) {
-  const r = await fetch(`https://api.github.com/repos/${G.owner}/${G.repo}${path}`, { method,
+async function gh(method, path, body, repo = G.repo) {
+  const r = await fetch(`https://api.github.com/repos/${G.owner}/${repo}${path}`, { method,
     headers: { "Authorization": "Bearer " + ghToken(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
     body: body ? JSON.stringify(body) : undefined });
   if (!r.ok) { const t = await r.text().catch(() => ""); const e = new Error("GitHub " + r.status); e.status = r.status; e.detail = t; throw e; }
   return r.status === 204 ? null : r.json();
 }
 function ghError(e) {
+  if (e.status === 4041) return `Der Zugangsschlüssel hat keinen Zugriff auf das private Projekt „${G.dataRepo}“. Bei GitHub den Schlüssel bearbeiten und dieses Projekt zusätzlich auswählen (Contents: Read and write).`;
   if (e.status === 401) return "Der Zugangsschlüssel ist ungültig oder abgelaufen. Bitte oben einen neuen eintragen.";
   if (e.status === 403 || e.status === 404) return "Der Zugangsschlüssel darf nicht in das Projekt schreiben. Beim Erstellen „Contents: Read and write“ für das Projekt Vertrag wählen.";
   return "Verbindung zu GitHub fehlgeschlagen (" + (e.message || e) + "). Bitte Internet prüfen und erneut versuchen.";
@@ -460,7 +462,7 @@ const DATENSCHUTZ = () => [
     "• Erfüllung gesetzlicher Pflichten, z. B. Aufbewahrung von Rechnungen (Art. 6 Abs. 1 lit. c DSGVO).",
     "• Fotos der Gäste im Rahmen der Hochzeitsreportage: berechtigtes Interesse des Hochzeitspaars und des Fotografen an der Dokumentation der Hochzeit (Art. 6 Abs. 1 lit. f DSGVO). Die Bilder gehen nur an das Hochzeitspaar.",
     "• Veröffentlichung von Bildern als Referenz nur mit Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die jederzeit für die Zukunft widerrufen werden kann."] },
-  { h: "4. Wer die Daten erhält", p: ["Daten geben wir nur weiter, soweit das für den Auftrag oder gesetzlich nötig ist: an den Anbieter unserer passwortgeschützten Online-Galerie, an Fotolabore bei bestellten Abzügen oder Produkten, an Banken und Zahlungsdienstleister (z. B. bei Kartenzahlung) sowie an unsere Steuerberatung. Diese Vertragsseite speichert eure Eingaben nicht auf einem Server: Die PDF entsteht direkt auf eurem Gerät und erreicht uns nur per E-Mail. Bereitgestellt wird die Seite über GitHub Pages (GitHub Inc., USA). Beim Aufruf verarbeitet GitHub technisch notwendige Verbindungsdaten wie eure IP-Adresse; eure Vertragsdaten erhält GitHub nicht. GitHub ist nach dem EU-US Data Privacy Framework zertifiziert (Art. 45 DSGVO)."] },
+  { h: "4. Wer die Daten erhält", p: ["Daten geben wir nur weiter, soweit das für den Auftrag oder gesetzlich nötig ist: an Portraitbox (Portraitbox GmbH) für die passwortgeschützte Online-Galerie und Bestellungen, an Fotolabore bei bestellten Abzügen oder Produkten, bei Kartenzahlung im Studio an Zettle by PayPal (PayPal (Europe) S.à r.l. et Cie, S.C.A., Luxemburg), beim Versand großer Bilddateien an WeTransfer (WeTransfer B.V., Amsterdam), an Banken sowie an unsere Steuerberatung. Mit Portraitbox besteht ein Auftragsverarbeitungsvertrag nach Art. 28 DSGVO. Die Vertragsseite wird über GitHub (GitHub Inc., USA) bereitgestellt. Den vorbereiteten Vertrag speichern wir dort verschlüsselt; lesbar ist er nur über euren persönlichen Link. Unsere Vertragsübersicht liegt in einem nicht öffentlichen Bereich, auf den nur wir Zugriff haben. Beim Aufruf verarbeitet GitHub technisch notwendige Verbindungsdaten wie eure IP-Adresse. GitHub ist nach dem EU-US Data Privacy Framework zertifiziert (Art. 45 DSGVO). Eure Unterschrift und die unterschriebene PDF entstehen nur auf eurem Gerät und erreichen uns per E-Mail. Nach Abschluss löschen wir den Online-Vertrag."] },
   { h: "5. Wie lange wir Daten speichern", p: ["Vertrags- und Rechnungsdaten bewahren wir so lange auf, wie es Handels- und Steuerrecht vorschreiben (HGB, AO – bis zu 10 Jahre). Die Bilddaten archivieren wir für Nachbestellungen bis zu 3 Jahre nach der Hochzeit und löschen sie danach, sofern nichts anderes vereinbart ist. Die Online-Galerie ist zeitlich begrenzt verfügbar."] },
   { h: "6. Eure Rechte", p: [`Ihr habt das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20 DSGVO) sowie das Recht, eine Einwilligung jederzeit für die Zukunft zu widerrufen (Art. 7 Abs. 3 DSGVO). Eine E-Mail an ${S.mail} genügt. Außerdem könnt ihr euch bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO), z. B. beim Landesbeauftragten für Datenschutz und Informationsfreiheit Mecklenburg-Vorpommern, Werderstraße 74a, 19055 Schwerin.`] },
   { h: "7. Widerspruchsrecht (Art. 21 DSGVO)", p: ["Soweit wir Daten auf Grundlage berechtigter Interessen verarbeiten (Art. 6 Abs. 1 lit. f DSGVO), könnt ihr – und auch jeder Gast – aus Gründen, die sich aus eurer besonderen Situation ergeben, jederzeit widersprechen. Gäste können dem Fotografen am Hochzeitstag einfach sagen, dass sie nicht fotografiert werden möchten. Einer Verarbeitung für Werbung könnt ihr jederzeit ohne Angabe von Gründen widersprechen."] },
@@ -505,12 +507,74 @@ function studioRender() {
   const draft = {}; SF.forEach(k => draft[k] = $("s_" + k).value); ls.set("fs_entwurf", draft);
   $("s_out").hidden = true;
 }
-function studioList() {
-  const list = ls.get("fs_vertraege", []);
-  if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge verschickt. Nach „Vertrag erstellen“ erscheinen sie hier.</td></tr>`; return; }
-  $("s_list").innerHTML = `<tr><th>Hochzeitspaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Erstellt</th><th></th></tr>` +
+/* ---------- Gemeinsame Vertragsliste (verschlüsselt im Projekt, für alle Geräte) ---------- */
+const IDX = "index.json";            // liegt im PRIVATEN Projekt Vertrag-Daten (nicht öffentlich)
+const LEGACY_IDX = "studio/index.json"; // alte, verschlüsselte Liste im öffentlichen Projekt
+let INDEX = [], EDIT = null;
+async function idxKey(tok) { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("fs-index|" + tok)); return new Uint8Array(h).slice(0, 16); }
+const fromB64 = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g, "")), c => c.charCodeAt(0)));
+const toB64 = s => { const b = new TextEncoder().encode(s); let r = ""; b.forEach(x => r += String.fromCharCode(x)); return btoa(r); };
+async function ghFile(path, repo = G.repo) { try { const f = await gh("GET", `/contents/${path}?ref=${G.branch}`, null, repo); return { sha: f.sha, text: fromB64(f.content) }; } catch (e) { if (e.status === 404) return null; throw e; } }
+async function loadIndex() {
+  const f = await ghFile(IDX, G.dataRepo);
+  if (f) return JSON.parse(f.text);
+  // Umzug der alten verschlüsselten Liste (nur einmal nötig)
+  const old = await ghFile(LEGACY_IDX);
+  if (old) { try { const list = await decryptData(JSON.parse(old.text), await idxKey(ghToken())); await saveIndex(list);
+      await gh("DELETE", `/contents/${LEGACY_IDX}`, { message: "Alte Vertragsliste umgezogen", sha: old.sha, branch: G.branch }); return list; } catch (e) {} }
+  return [];
+}
+async function saveIndex(list) {
+  const f = await ghFile(IDX, G.dataRepo);
+  await gh("PUT", `/contents/${IDX}`, { message: "Vertragsliste aktualisiert", content: toB64(JSON.stringify(list, null, 1)), branch: G.branch, ...(f ? { sha: f.sha } : {}) }, G.dataRepo);
+}
+async function updateIndex(fn) { const list = await loadIndex(); const out = fn(list) || list; await saveIndex(out); INDEX = out; ls.set("fs_index_cache", out); renderList(); }
+function linkOf(x) { return location.href.split("#")[0] + "#" + x.id + x.k; }
+function renderList() {
+  const list = INDEX;
+  if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge. Nach „Vertrag erstellen“ erscheinen sie hier – auf allen Geräten.</td></tr>`; return; }
+  $("s_list").innerHTML = `<tr><th>Hochzeitspaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Stand</th><th></th></tr>` +
     list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
-      <td><a href="${esc(x.link)}" target="_blank" rel="noopener">Link</a> · <a href="#" data-del="${i}" title="Löscht den Vertrag auch online – der Link funktioniert danach nicht mehr">Löschen</a></td></tr>`).join("");
+      <td style="white-space:nowrap"><a href="${esc(linkOf(x))}" target="_blank" rel="noopener">Ansehen</a> · <a href="#" data-edit="${i}">Bearbeiten</a> · <a href="#" data-del="${i}" title="Löscht den Vertrag auch online – der Link funktioniert danach nicht mehr">Löschen</a></td></tr>`).join("");
+}
+async function refreshList() {
+  INDEX = ls.get("fs_index_cache", []); renderList();
+  if (!ghToken()) return;
+  try {
+    let list = await loadIndex();
+    // einmalig: Einträge aus der alten, nur lokal gespeicherten Liste übernehmen
+    const old = ls.get("fs_vertraege", []).filter(x => x.link && /#[A-Za-z0-9_-]{30}$/.test(x.link));
+    if (old.length) {
+      old.forEach(x => { const h = x.link.split("#")[1]; const id = h.slice(0, 8);
+        if (!list.some(y => y.id === id)) list.push({ id, k: h.slice(8), namen: x.namen, datum: x.datum, total: x.total, code: x.code, vd: x.vd, vz: x.vz }); });
+      await saveIndex(list); ls.set("fs_vertraege", []);
+    }
+    INDEX = list; ls.set("fs_index_cache", list); renderList();
+  } catch (err) { setMsg("err", "Die Vertragsliste konnte nicht geladen werden. " + ghError(err)); }
+}
+function fillForm(d) {
+  const set = (k, v) => { $("s_" + k).value = v ?? ""; };
+  ["n1","n2","str","ort","tel","mail","datum","zeit","trau","loc","sonstT","notiz"].forEach(k => set(k, d[k]));
+  ["std","halb","nacht","km","unt","sonstB"].forEach(k => set(k, d[k] || 0));
+  $("s_sonn").value = d.sonn ? "1" : "0";
+  const pk = Object.keys(CONFIG.pakete).find(k => CONFIG.pakete[k].name === d.pkName) || "ind";
+  $("s_pk").value = pk;
+  if (pk === "ind") { set("indP", d.pkPreis); set("indD", d.pkDauer); set("indL", (d.pkL || []).join("\n")); }
+}
+function editMode(on, x) {
+  EDIT = on ? x : null;
+  $("s_editbar").hidden = !on;
+  if (on) $("s_editname").textContent = x.namen + " · " + dDE(x.datum);
+  $("s_submit").textContent = on ? "Änderungen speichern" : "Vertrag erstellen & Link holen";
+}
+function showResult(d, link) {
+  const code = contractCode(d), c = calc(d);
+  $("s_code").textContent = code; $("s_vz").textContent = vzweck(d);
+  $("s_link").textContent = link; $("s_preview").href = link;
+  const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
+  $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
+  $("s_out").hidden = false;
+  $("s_out").scrollIntoView({ behavior: "smooth", block: "center" });
 }
 function setMsg(kind, text) { const m = $("s_tokenmsg"); m.className = "msg " + kind; m.textContent = text; m.hidden = !text; }
 function connUI() { const t = ghToken(); $("s_conn_ok").hidden = !t; $("s_conn_form").hidden = !!t; $("s_repo").textContent = G.owner + "/" + G.repo; }
@@ -521,9 +585,11 @@ function initStudio() {
   $("s_tokensave").addEventListener("click", async () => {
     const t = $("s_token").value.trim(); if (!t) return;
     const old = ghToken(); ls.set("fs_token", t);
-    try { const r = await gh("GET", ""); if (r.permissions && r.permissions.push === false) throw Object.assign(new Error("keine Schreibrechte"), { status: 403 });
-      $("s_token").value = ""; setMsg("ok", "Verbindung klappt. Ihr könnt jetzt Verträge erstellen."); connUI(); }
-    catch (err) { ls.set("fs_token", old); setMsg("err", ghError(err)); }
+    try {
+      const r = await gh("GET", ""); if (r.permissions && r.permissions.push === false) throw Object.assign(new Error("keine Schreibrechte"), { status: 403 });
+      try { await gh("GET", "", null, G.dataRepo); } catch (e) { if (e.status === 404 || e.status === 403) throw Object.assign(new Error("Daten"), { status: 4041 }); throw e; }
+      $("s_token").value = ""; setMsg("ok", "Verbindung klappt. Ihr könnt jetzt Verträge erstellen."); connUI(); refreshList();
+    } catch (err) { ls.set("fs_token", old); setMsg("err", ghError(err)); }
   });
   $("s_pk").innerHTML = Object.entries(CONFIG.pakete).map(([k, p]) => `<option value="${k}">${esc(p.name)}${p.preis ? " – " + eur(p.preis) : ""}</option>`).join("");
   $("s_pk").value = "p2";
@@ -531,34 +597,31 @@ function initStudio() {
   if (draft) SF.forEach(k => { if (draft[k] !== undefined) $("s_" + k).value = draft[k]; });
   $("sf").addEventListener("input", studioRender);
   $("sf").addEventListener("change", studioRender);
-  $("s_reset").addEventListener("click", () => { $("sf").reset(); $("s_pk").value = "p2"; studioRender(); });
+  const reset = () => { $("sf").reset(); $("s_pk").value = "p2"; editMode(false); studioRender(); };
+  $("s_reset").addEventListener("click", reset);
+  $("s_editcancel").addEventListener("click", e => { e.preventDefault(); reset(); });
   $("sf").addEventListener("submit", async e => {
     e.preventDefault();
     const d = studioData();
     if (!d.n1 || !d.datum) { alert("Bitte mindestens Name 1 und das Hochzeitsdatum eintragen."); return; }
     if (!ghToken()) { setMsg("err", "Bitte zuerst oben den GitHub-Zugangsschlüssel eintragen."); $("s_setup").scrollIntoView({ behavior: "smooth" }); return; }
-    const btn = $("s_submit"); btn.disabled = true; btn.textContent = "Wird hochgeladen …";
+    const btn = $("s_submit"); const label = btn.textContent; btn.disabled = true; btn.textContent = "Wird gespeichert …";
     try {
-      const id = b2u(rnd(6)), key = rnd(16);
-      const file = await encryptData(d, key);
-      await gh("PUT", `/contents/v/${id}.json`, { message: `Vertrag ${id}`, content: btoa(file), branch: G.branch });
-      const base = location.href.split("#")[0];
-      const link = base + "#" + id + b2u(key);
-      const code = contractCode(d), c = calc(d);
-      $("s_code").textContent = code; $("s_vz").textContent = vzweck(d);
-      $("s_link").textContent = link;
-      $("s_preview").href = link;
-      const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
-      $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
-      $("s_out").hidden = false;
-      const list = ls.get("fs_vertraege", []);
-      list.unshift({ namen: names(d), datum: d.datum, total: c.total, code, vd: d.vd, link, vz: vzweck(d), id });
-      ls.set("fs_vertraege", list.slice(0, 300));
-      studioList();
-      $("s_out").scrollIntoView({ behavior: "smooth", block: "center" });
+      let id, kb;
+      if (EDIT) { id = EDIT.id; kb = u2b(EDIT.k); } else { id = b2u(rnd(6)); kb = rnd(16); }
+      const file = await encryptData(d, kb);
+      const cur = EDIT ? await ghFile(`v/${id}.json`) : null;
+      await gh("PUT", `/contents/v/${id}.json`, { message: (EDIT ? "Vertrag geändert " : "Vertrag ") + id, content: btoa(file), branch: G.branch, ...(cur ? { sha: cur.sha } : {}) });
+      const entry = { id, k: b2u(kb), namen: names(d), datum: d.datum, total: calc(d).total, code: contractCode(d), vd: d.vd, vz: vzweck(d) };
+      await updateIndex(list => { const i = list.findIndex(x => x.id === id); if (i >= 0) list[i] = entry; else list.unshift(entry); return list; });
+      const link = linkOf(entry);
+      showResult(d, link);
+      if (EDIT) $("s_code").textContent += " (geändert – der Link bleibt gleich)";
+      editMode(false);
     } catch (err) {
       console.error(err); setMsg("err", ghError(err)); $("s_setup").scrollIntoView({ behavior: "smooth" });
-    } finally { btn.disabled = false; btn.textContent = "Vertrag erstellen & Link holen"; }
+      btn.textContent = label;
+    } finally { btn.disabled = false; if (!EDIT) btn.textContent = "Vertrag erstellen & Link holen"; }
   });
   $("s_copy").addEventListener("click", async () => {
     const t = $("s_link").textContent;
@@ -567,18 +630,29 @@ function initStudio() {
     setTimeout(() => $("s_copy").textContent = "Link kopieren", 2500);
   });
   $("s_list").addEventListener("click", async e => {
+    const ed = e.target.getAttribute("data-edit");
+    if (ed !== null) {
+      e.preventDefault(); const x = INDEX[+ed]; if (!x) return;
+      e.target.textContent = "Lade …";
+      try { const f = await ghFile(`v/${x.id}.json`); if (!f) throw Object.assign(new Error("nicht gefunden"), { status: 0 });
+        const d = await decryptData(JSON.parse(f.text), u2b(x.k));
+        fillForm(d); studioRender(); editMode(true, x);
+        $("sf").scrollIntoView({ behavior: "smooth" });
+      } catch (err) { setMsg("err", "Vertrag konnte nicht geladen werden. " + ghError(err)); }
+      e.target.textContent = "Bearbeiten"; return;
+    }
     const i = e.target.getAttribute("data-del"); if (i === null) return; e.preventDefault();
-    const list = ls.get("fs_vertraege", []), x = list[+i];
+    const x = INDEX[+i];
     if (e.target.dataset.sure !== "1") { e.target.dataset.sure = "1"; e.target.textContent = "Wirklich löschen?"; return; }
     e.target.textContent = "Lösche …";
-    if (x && x.id && ghToken()) {
-      try { const f = await gh("GET", `/contents/v/${x.id}.json?ref=${G.branch}`);
-        await gh("DELETE", `/contents/v/${x.id}.json`, { message: `Vertrag ${x.id} gelöscht`, sha: f.sha, branch: G.branch }); }
-      catch (err) { if (err.status !== 404) { setMsg("err", ghError(err)); e.target.textContent = "Löschen"; e.target.dataset.sure = ""; return; } }
-    }
-    list.splice(+i, 1); ls.set("fs_vertraege", list); studioList();
+    try {
+      const f = await ghFile(`v/${x.id}.json`);
+      if (f) await gh("DELETE", `/contents/v/${x.id}.json`, { message: `Vertrag ${x.id} gelöscht`, sha: f.sha, branch: G.branch });
+      await updateIndex(list => list.filter(y => y.id !== x.id));
+      if (EDIT && EDIT.id === x.id) reset();
+    } catch (err) { setMsg("err", ghError(err)); e.target.textContent = "Löschen"; e.target.dataset.sure = ""; }
   });
-  studioRender(); studioList();
+  studioRender(); refreshList();
 }
 
 /* ============================================================
