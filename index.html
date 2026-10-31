@@ -169,7 +169,7 @@ details[open] summary{margin-bottom:8px}
         <button type="button" class="ghost" id="s_reset">Neues Formular</button>
       </div>
       <div id="s_out" hidden>
-        <div class="msg ok">Vertrag ist online. Vertragsnummer <span class="code" id="s_code"></span> – kommt sie auf der unterschriebenen PDF genauso zurück, wurde nichts verändert.</div>
+        <div class="msg ok">Vertrag ist online. Vertragsnummer <span class="code" id="s_code"></span>. Steht derselbe Prüfcode auf der unterschriebenen PDF, wurde nichts verändert.</div>
         <p class="note" style="margin-top:10px">Verwendungszweck für die Terminreservierung: <strong id="s_vz"></strong></p>
         <div class="linkbox" id="s_link"></div>
         <div class="actions">
@@ -182,7 +182,7 @@ details[open] summary{margin-bottom:8px}
 
     <section class="card">
       <h2>Verschickte Verträge</h2>
-      <p class="note">Auf allen Geräten gleich, auf denen der Zugangsschlüssel eingetragen ist. Vergleicht die Vertragsnummer auf der zurückgeschickten PDF mit dieser Liste.</p>
+      <p class="note">Auf allen Geräten gleich, auf denen der Zugangsschlüssel eingetragen ist. Vergleicht Vertragsnummer und Prüfcode auf der zurückgeschickten PDF mit dieser Liste.</p>
       <div class="scroll"><table class="list" id="s_list"></table></div>
     </section>
   </main>
@@ -341,13 +341,13 @@ async function gh(method, path, body, repo = G.repo) {
   const r = await fetch(`https://api.github.com/repos/${G.owner}/${repo}${path}`, { method,
     headers: { "Authorization": "Bearer " + ghToken(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
     body: body ? JSON.stringify(body) : undefined });
-  if (!r.ok) { const t = await r.text().catch(() => ""); const e = new Error("GitHub " + r.status); e.status = r.status; e.detail = t; throw e; }
+  if (!r.ok) { const t = await r.text().catch(() => ""); const e = new Error("GitHub " + r.status); e.status = r.status; e.detail = t; e.repo = repo; throw e; }
   return r.status === 204 ? null : r.json();
 }
 function ghError(e) {
   if (e.status === 4041) return `Der Zugangsschlüssel hat keinen Zugriff auf das private Projekt „${G.dataRepo}“. Bei GitHub den Schlüssel bearbeiten und dieses Projekt zusätzlich auswählen (Contents: Read and write).`;
   if (e.status === 401) return "Der Zugangsschlüssel ist ungültig oder abgelaufen. Bitte oben einen neuen eintragen.";
-  if (e.status === 403 || e.status === 404) return "Der Zugangsschlüssel darf nicht in das Projekt schreiben. Beim Erstellen „Contents: Read and write“ für das Projekt Vertrag wählen.";
+  if (e.status === 403 || e.status === 404) return `Der Zugangsschlüssel darf nicht in das Projekt „${e.repo || G.repo}“ schreiben. Bei GitHub den Schlüssel bearbeiten: beide Projekte (${G.repo} und ${G.dataRepo}) auswählen und „Contents: Read and write“ einstellen.`;
   return "Verbindung zu GitHub fehlgeschlagen (" + (e.message || e) + "). Bitte Internet prüfen und erneut versuchen.";
 }
 async function loadContractFile(id) {
@@ -358,7 +358,7 @@ async function loadContractFile(id) {
 /* Verwendungszweck: Vertragsnummer + Nachname + Datum – eindeutig pro Vertrag, max. 140 Zeichen */
 function vzweck(d, art = "Terminreservierung") {
   const nn = (d.vzName || (d.n1 || "").trim().split(/\s+/).pop() || "").replace(/[^\wäöüÄÖÜß\- ]/g, "");
-  return `${art} ${contractCode(d)} ${nn} Hochzeit ${dDE(d.datum)}`.replace(/\s+/g, " ").trim().slice(0, 140);
+  return `${art} ${nrOf(d)} ${nn} Hochzeit ${dDE(d.datum)}`.replace(/\s+/g, " ").trim().slice(0, 140);
 }
 /* GiroCode (EPC-QR): mit der Banking-App scannen, Betrag und Verwendungszweck sind schon eingetragen */
 function epcQR(amount, text) {
@@ -528,13 +528,22 @@ async function saveIndex(list) {
   const f = await ghFile(IDX, G.dataRepo);
   await gh("PUT", `/contents/${IDX}`, { message: "Vertragsliste aktualisiert", content: toB64(JSON.stringify(list, null, 1)), branch: G.branch, ...(f ? { sha: f.sha } : {}) }, G.dataRepo);
 }
+/* Fortlaufende Vertragsnummer: Zähler im privaten Projekt, wird nie zurückgesetzt */
+async function nextNr(year) {
+  const f = await ghFile("counter.json", G.dataRepo);
+  const c = f ? JSON.parse(f.text) : {};
+  const n = (c[year] || 0) + 1; c[year] = n;
+  await gh("PUT", "/contents/counter.json", { message: "Vertragsnummer " + year + "-" + n, content: toB64(JSON.stringify(c)), branch: G.branch, ...(f ? { sha: f.sha } : {}) }, G.dataRepo);
+  return `HZ-${year}-${String(n).padStart(3, "0")}`;
+}
+const nrOf = d => d.nr || contractCode(d);
 async function updateIndex(fn) { const list = await loadIndex(); const out = fn(list) || list; await saveIndex(out); INDEX = out; ls.set("fs_index_cache", out); renderList(); }
 function linkOf(x) { return location.href.split("#")[0] + "#" + x.id + x.k; }
 function renderList() {
   const list = INDEX;
   if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge. Nach „Vertrag erstellen“ erscheinen sie hier – auf allen Geräten.</td></tr>`; return; }
   $("s_list").innerHTML = `<tr><th>Hochzeitspaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Stand</th><th></th></tr>` +
-    list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
+    list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.nr || x.code)}</span><br><span class="note">Prüfcode ${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
       <td style="white-space:nowrap"><a href="${esc(linkOf(x))}" target="_blank" rel="noopener">Ansehen</a> · <a href="#" data-edit="${i}">Bearbeiten</a> · <a href="#" data-del="${i}" title="Löscht den Vertrag auch online – der Link funktioniert danach nicht mehr">Löschen</a></td></tr>`).join("");
 }
 async function refreshList() {
@@ -569,7 +578,7 @@ function editMode(on, x) {
 }
 function showResult(d, link) {
   const code = contractCode(d), c = calc(d);
-  $("s_code").textContent = code; $("s_vz").textContent = vzweck(d);
+  $("s_code").textContent = nrOf(d) + " · Prüfcode " + code; $("s_vz").textContent = vzweck(d);
   $("s_link").textContent = link; $("s_preview").href = link;
   const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
   $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
@@ -609,14 +618,15 @@ function initStudio() {
     try {
       let id, kb;
       if (EDIT) { id = EDIT.id; kb = u2b(EDIT.k); } else { id = b2u(rnd(6)); kb = rnd(16); }
+      d.nr = (EDIT && EDIT.nr) ? EDIT.nr : await nextNr(String(new Date().getFullYear()));
       const file = await encryptData(d, kb);
       const cur = EDIT ? await ghFile(`v/${id}.json`) : null;
       await gh("PUT", `/contents/v/${id}.json`, { message: (EDIT ? "Vertrag geändert " : "Vertrag ") + id, content: btoa(file), branch: G.branch, ...(cur ? { sha: cur.sha } : {}) });
-      const entry = { id, k: b2u(kb), namen: names(d), datum: d.datum, total: calc(d).total, code: contractCode(d), vd: d.vd, vz: vzweck(d) };
+      const entry = { id, k: b2u(kb), nr: d.nr, namen: names(d), datum: d.datum, total: calc(d).total, code: contractCode(d), vd: d.vd, vz: vzweck(d) };
       await updateIndex(list => { const i = list.findIndex(x => x.id === id); if (i >= 0) list[i] = entry; else list.unshift(entry); return list; });
       const link = linkOf(entry);
       showResult(d, link);
-      if (EDIT) $("s_code").textContent += " (geändert – der Link bleibt gleich)";
+      if (EDIT) $("s_code").textContent += " (geändert – Nummer und Link bleiben gleich)";
       editMode(false);
     } catch (err) {
       console.error(err); setMsg("err", ghError(err)); $("s_setup").scrollIntoView({ behavior: "smooth" });
@@ -691,7 +701,7 @@ function initKunde(data) {
   $("k_paket").innerHTML = `<div class="pkg">${esc(D.pkName)} · ${esc(D.pkDauer)} · ${eur(D.pkPreis)}</div><ul class="leist">${D.pkL.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` +
     (D.notiz ? `<h3>Zusätzliche Vereinbarungen</h3><p>${esc(D.notiz).replace(/\n/g, "<br>")}</p>` : "");
   $("k_money").innerHTML = moneyRows(calc(D), D.u);
-  $("k_code").textContent = contractCode(D);
+  $("k_code").textContent = nrOf(D) + " · Prüfcode " + contractCode(D);
   $("k_pay").innerHTML = payHTML(D);
   $("k_legal").innerHTML = `<h2>Vertragsbedingungen</h2>` + legalHTML(legalText(D), false) +
     legalHTML(WIDERRUF(), true, "Widerrufsbelehrung & Muster-Widerrufsformular") + legalHTML(DATENSCHUTZ(), true, "Datenschutzhinweise");
@@ -839,7 +849,7 @@ async function buildPDF(d, s) {
   doc.addPage(); y = M; blocks(DATENSCHUTZ());
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); font(7.5, "normal", [140, 130, 120]);
-    doc.text(`${S.name} · Hochzeitsvertrag ${names(d)} · Vertragsnummer ${code} · Seite ${i} von ${n}`, 105, 290, { align: "center" }); }
+    doc.text(`${S.name} · Hochzeitsvertrag ${names(d)} · Vertragsnr. ${nrOf(d)} · Prüfcode ${code} · Seite ${i} von ${n}`, 105, 290, { align: "center" }); }
   return doc.output("blob");
 }
 
