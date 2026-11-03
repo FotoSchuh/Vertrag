@@ -356,11 +356,8 @@ async function loadContractFile(id) {
   for (const u of urls) { try { const r = await fetch(u, { cache: "no-store" }); if (r.ok) return await r.json(); } catch (e) {} }
   return null;
 }
-/* Verwendungszweck: Vertragsnummer + Nachname + Datum – eindeutig pro Vertrag, max. 140 Zeichen */
-function vzweck(d, art = "Terminreservierung") {
-  const nn = (d.vzName || (d.n1 || "").trim().split(/\s+/).pop() || "").replace(/[^\wäöüÄÖÜß\- ]/g, "");
-  return `${art} ${nrOf(d)} ${nn} Hochzeit ${dDE(d.datum)}`.replace(/\s+/g, " ").trim().slice(0, 140);
-}
+/* Verwendungszweck: nur die Vertragsnummer (A und B unterscheiden sich am Betrag) */
+function vzweck(d) { return nrOf(d); }
 /* GiroCode (EPC-QR): mit der Banking-App scannen, Betrag und Verwendungszweck sind schon eingetragen */
 function epcQR(amount, text) {
   qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
