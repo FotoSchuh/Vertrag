@@ -411,7 +411,7 @@ function legalText(d) {
     { h: "Gut zu wissen", p: [
       `Die angegebene Dauer ist ein Richtwert. Dauert der Tag länger, berechnen wir jede weitere Stunde mit ${eur(u.std)} und jede angefangene halbe Stunde mit ${eur(u.halb)}. Bei Regen weichen wir für die Paarfotos gemeinsam ins Studio aus.` ] },
     { h: "4. Terminreservierung und Zahlung", p: [
-      `Mit Unterzeichnung dieses Vertrages wird für die Terminreservierung ein Betrag von ${pr} % des Gesamtbetrages fällig (${eur(c.res)}), zahlbar innerhalb von 7 Tagen per Überweisung oder im Studio bar bzw. mit Karte. Erst mit Eingang der Terminreservierung ist der Termin verbindlich gebucht. Ab dann hält der Fotograf den Tag exklusiv für das Hochzeitspaar frei und sagt andere Anfragen für diesen Tag ab. Die Terminreservierung wird vollständig auf den Gesamtbetrag angerechnet. Der Restbetrag ist am Hochzeitstag nach dem Shooting fällig (bar oder mit Karte) oder nach Absprache vorab per Überweisung.`,
+      `Mit Unterzeichnung dieses Vertrages wird für die Terminreservierung ein Betrag von ${pr} % des Gesamtbetrages fällig (${eur(c.res)}), zahlbar innerhalb von 7 Tagen per Überweisung oder im Studio bar bzw. mit Karte. Erst mit Eingang der Terminreservierung ist der Termin verbindlich gebucht. Ab dann hält der Fotograf den Tag exklusiv für das Hochzeitspaar frei und sagt andere Anfragen für diesen Tag ab. Die Terminreservierung wird vollständig auf den Gesamtbetrag angerechnet. Gern kann auch gleich der gesamte Betrag innerhalb von 7 Tagen überwiesen werden; die Terminreservierung ist darin enthalten. Der Restbetrag ist am Hochzeitstag nach dem Shooting fällig (bar oder mit Karte) oder nach Absprache vorab per Überweisung.`,
       `Bankverbindung: ${S.kontoinhaber} · ${S.bank} · IBAN ${S.iban} · BIC ${S.bic}`,
       `Verwendungszweck für die Terminreservierung: ${vzweck(d)} – bitte genau so angeben (oder den GiroCode mit der Banking-App scannen).`,
       `Alle Beträge sind Endpreise inklusive ${Math.round(u.mwst * 100)} % Mehrwertsteuer.` ] },
@@ -424,7 +424,7 @@ function legalText(d) {
     { h: "7. Veröffentlichung als Referenz", p: [
       `Ob der Fotograf ausgewählte Bilder des Hochzeitspaars als Referenz für die eigene Werbung verwenden darf (Website, Social Media, Studio, Portfolio), entscheidet das Hochzeitspaar unten selbst. Die Einwilligung ist freiwillig und kann jederzeit für die Zukunft per E-Mail an ${S.mail} widerrufen werden. Gäste werden nur mit deren eigener Einwilligung veröffentlicht.` ] },
     { h: "8. Absage, Krankheit und höhere Gewalt", p: [
-      `• Sagt der Auftraggeber den Termin ab oder tritt er vom Vertrag zurück, behält der Fotograf die Terminreservierung (${pr} % des Gesamtbetrages) als pauschale Ausfallentschädigung ein, da ein reservierter Hochzeitstermin in der Regel nicht mehr anderweitig vergeben werden kann. Ist die Terminreservierung zu diesem Zeitpunkt noch nicht bezahlt, ist sie trotzdem zu zahlen. Dem Auftraggeber bleibt der Nachweis vorbehalten, dass kein oder ein wesentlich geringerer Schaden entstanden ist.`,
+      `• Sagt der Auftraggeber den Termin ab oder tritt er vom Vertrag zurück, behält der Fotograf die Terminreservierung (${pr} % des Gesamtbetrages) als pauschale Ausfallentschädigung ein, da ein reservierter Hochzeitstermin in der Regel nicht mehr anderweitig vergeben werden kann. Ist die Terminreservierung zu diesem Zeitpunkt noch nicht bezahlt, ist sie trotzdem zu zahlen. Dem Auftraggeber bleibt der Nachweis vorbehalten, dass kein oder ein wesentlich geringerer Schaden entstanden ist. Wurde bereits mehr als die Terminreservierung gezahlt, erstattet der Fotograf den darüber hinausgehenden Betrag.`,
       "• Das gesetzliche Widerrufsrecht (siehe Widerrufsbelehrung) bleibt unberührt: Wird der Vertrag innerhalb der Widerrufsfrist widerrufen, erstattet der Fotograf alle Zahlungen einschließlich der Terminreservierung.",
       "• Kann die Hochzeit aus Gründen höherer Gewalt (z. B. Unfall, schwere Krankheit) nicht stattfinden, verzichtet der Fotograf auf die Ausfallentschädigung, soweit ihm keine Kosten entstanden sind. Eine Trennung des Paares oder falsche Angaben zu Ort, Datum oder Uhrzeit gelten nicht als höhere Gewalt.",
       "• Kann der Fotograf den Auftrag wegen Krankheit, Unfall oder höherer Gewalt nicht ausführen, bemüht er sich um einen gleichwertigen Ersatzfotografen. Gelingt das nicht, werden bereits geleistete Zahlungen einschließlich der Terminreservierung vollständig erstattet. Weitergehende Ansprüche bestehen nur bei Vorsatz oder grober Fahrlässigkeit; die Haftung für Schäden an Leben, Körper und Gesundheit bleibt unberührt.",
@@ -580,7 +580,7 @@ function showResult(d, link) {
   const code = contractCode(d), c = calc(d);
   $("s_code").textContent = nrOf(d) + " · Prüfcode " + code; $("s_vz").textContent = vzweck(d);
   $("s_link").textContent = link; $("s_preview").href = link;
-  const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\n(Im Vertrag findet ihr dazu auch einen GiroCode zum Scannen.)\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
+  const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\nIhr könnt auch gleich den Gesamtbetrag von ${eur(c.total)} überweisen (Verwendungszweck: ${vzweck(d, "Gesamtbetrag")}). Dann ist am Hochzeitstag nichts mehr offen.\n\nIm Vertrag findet ihr für beide Varianten einen GiroCode zum Scannen.\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
   $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
   $("s_out").hidden = false;
   $("s_out").scrollIntoView({ behavior: "smooth", block: "center" });
@@ -755,13 +755,15 @@ async function sign() {
 
 function payHTML(d) {
   const c = calc(d);
-  return `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
-    <div style="flex:none;background:#fff;padding:4px;border-radius:6px">${qrSVG(epcQR(c.res, vzweck(d)), 132)}</div>
+  const box = (title, amt, vz, hint) => `<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+    <div style="flex:none;background:#fff;padding:4px;border-radius:6px">${qrSVG(epcQR(amt, vz), 132)}</div>
     <div style="min-width:0;flex:1 1 220px;font-size:14px;line-height:1.55">
-      <strong>Terminreservierung ${eur(c.res)}</strong> – bitte innerhalb von 7 Tagen überweisen.<br>
-      Empfänger: ${esc(S.kontoinhaber)}<br>IBAN: <span class="code">${esc(S.iban)}</span><br>BIC: ${esc(S.bic)}<br>
-      Verwendungszweck: <strong>${esc(vzweck(d))}</strong><br>
-      <span class="note">Tipp: GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon drin.</span></div></div>`;
+      <strong>${title} ${eur(amt)}</strong> – ${hint}<br>
+      Verwendungszweck: <strong>${esc(vz)}</strong></div></div>`;
+  return `<p style="font-size:14px;margin:0 0 12px">Empfänger: ${esc(S.kontoinhaber)} · IBAN: <span class="code">${esc(S.iban)}</span> · BIC: ${esc(S.bic)}</p>` +
+    box("Variante A: Terminreservierung", c.res, vzweck(d), "bitte innerhalb von 7 Tagen überweisen. Der Rest ist am Hochzeitstag fällig.") +
+    box("Variante B: Gesamtbetrag", c.total, vzweck(d, "Gesamtbetrag"), "alles auf einmal, ebenfalls innerhalb von 7 Tagen. Dann ist am Hochzeitstag nichts mehr offen.") +
+    `<p class="note">Tipp: GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon drin. Bitte nur eine der beiden Varianten überweisen.</p>`;
 }
 
 /* ---------- PDF ---------- */
@@ -820,17 +822,23 @@ async function buildPDF(d, s) {
   row(`Terminreservierung (${Math.round(d.u.reservierung * 100)} %)`, "fällig innerhalb von 7 Tagen", eur(c.res));
   row("Restbetrag", "am Hochzeitstag nach dem Shooting", eur(c.rest));
   row(`enthaltene MwSt. (${Math.round(d.u.mwst * 100)} %)`, "", eur(c.mwst));
-  need(36); y += 3;
-  const q = epcQR(c.res, vzweck(d)), nmod = q.getModuleCount(), qs = 30, cell = qs / nmod;
-  doc.setFillColor(0, 0, 0);
-  for (let r = 0; r < nmod; r++) for (let cc = 0; cc < nmod; cc++) if (q.isDark(r, cc)) doc.rect(M + cc * cell, y + r * cell, cell + 0.02, cell + 0.02, "F");
-  const tx = M + qs + 6; let ty = y + 3;
-  font(9.5, "bold"); doc.text(`Überweisung Terminreservierung: ${eur(c.res)} innerhalb von 7 Tagen`, tx, ty); ty += 5;
-  font(9);
-  [`Empfänger: ${S.kontoinhaber}`, `IBAN: ${S.iban} · BIC: ${S.bic} · ${S.bank}`].forEach(t => { doc.text(t, tx, ty); ty += 4.4; });
-  font(9, "bold"); doc.text(doc.splitTextToSize(`Verwendungszweck: ${vzweck(d)}`, W - qs - 6), tx, ty); ty += 8.5;
-  font(8, "normal", [110, 100, 94]); doc.text("GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon eingetragen.", tx, ty);
-  y += qs + 2;
+  need(62); y += 3;
+  font(9.5, "bold"); doc.text("Überweisung – bitte eine der beiden Varianten wählen:", M, y + 3);
+  font(8.5); doc.text(`Empfänger: ${S.kontoinhaber} · IBAN: ${S.iban} · BIC: ${S.bic} · ${S.bank}`, M, y + 7.5); y += 11;
+  const qrBlock = (x, title, amt, vz, sub) => {
+    const q = epcQR(amt, vz), nmod = q.getModuleCount(), qs = 28, cell = qs / nmod;
+    doc.setFillColor(0, 0, 0);
+    for (let r = 0; r < nmod; r++) for (let cc = 0; cc < nmod; cc++) if (q.isDark(r, cc)) doc.rect(x + cc * cell, y + r * cell, cell + 0.02, cell + 0.02, "F");
+    const tx = x + qs + 3, tw = W / 2 - qs - 6; let ty = y + 3;
+    font(9, "bold"); doc.text(doc.splitTextToSize(title, tw), tx, ty); ty += 4.4;
+    font(10.5, "bold"); doc.text(eur(amt), tx, ty); ty += 5;
+    font(8); doc.text(doc.splitTextToSize(sub, tw), tx, ty); ty += 7.5;
+    font(8, "bold"); doc.text(doc.splitTextToSize("Verwendungszweck: " + vz, tw), tx, ty);
+  };
+  qrBlock(M, "A: Terminreservierung", c.res, vzweck(d), "innerhalb von 7 Tagen, Rest am Hochzeitstag");
+  qrBlock(M + W / 2 + 2, "B: Gesamtbetrag", c.total, vzweck(d, "Gesamtbetrag"), "alles auf einmal innerhalb von 7 Tagen");
+  y += 31;
+  font(8, "normal", [110, 100, 94]); doc.text("GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon eingetragen.", M, y); y += 4;
   blocks(legalText(d));
   head("Einwilligung Referenz");
   para(s.ref === "ja" ? "[X] Ja, wir sind einverstanden, dass ausgewählte Bilder als Referenz veröffentlicht werden.   [ ] Nein"
