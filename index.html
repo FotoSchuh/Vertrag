@@ -338,13 +338,14 @@ async function decryptData(file, raw) {
 const G = CONFIG.github;
 const ghToken = () => ls.get("fs_token", "");
 async function gh(method, path, body, repo = G.repo) {
-  const r = await fetch(`https://api.github.com/repos/${G.owner}/${repo}${path}`, { method,
+  const r = await fetch(`https://api.github.com/repos/${G.owner}/${repo}${path}`, { method, cache: "no-store",
     headers: { "Authorization": "Bearer " + ghToken(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
     body: body ? JSON.stringify(body) : undefined });
   if (!r.ok) { const t = await r.text().catch(() => ""); const e = new Error("GitHub " + r.status); e.status = r.status; e.detail = t; e.repo = repo; throw e; }
   return r.status === 204 ? null : r.json();
 }
 function ghError(e) {
+  if (e.status === 409 || e.status === 422) return "GitHub war gerade noch mit der letzten Änderung beschäftigt. Bitte ein paar Sekunden warten und noch einmal auf den Knopf tippen.";
   if (e.status === 4041) return `Der Zugangsschlüssel hat keinen Zugriff auf das private Projekt „${G.dataRepo}“. Bei GitHub den Schlüssel bearbeiten und dieses Projekt zusätzlich auswählen (Contents: Read and write).`;
   if (e.status === 401) return "Der Zugangsschlüssel ist ungültig oder abgelaufen. Bitte oben einen neuen eintragen.";
   if (e.status === 403 || e.status === 404) return `Der Zugangsschlüssel darf nicht in das Projekt „${e.repo || G.repo}“ schreiben. Bei GitHub den Schlüssel bearbeiten: beide Projekte (${G.repo} und ${G.dataRepo}) auswählen und „Contents: Read and write“ einstellen.`;
@@ -528,8 +529,16 @@ async function saveIndex(list) {
   const f = await ghFile(IDX, G.dataRepo);
   await gh("PUT", `/contents/${IDX}`, { message: "Vertragsliste aktualisiert", content: toB64(JSON.stringify(list, null, 1)), branch: G.branch, ...(f ? { sha: f.sha } : {}) }, G.dataRepo);
 }
+/* Bei Konflikt (409/422 = Datei wurde inzwischen geändert) kurz warten und neu versuchen */
+async function retry(fn, tries = 4) {
+  for (let i = 0; ; i++) {
+    try { return await fn(); }
+    catch (e) { if ((e.status === 409 || e.status === 422) && i < tries - 1) { await new Promise(r => setTimeout(r, 800 * (i + 1))); continue; } throw e; }
+  }
+}
 /* Fortlaufende Vertragsnummer: Zähler im privaten Projekt, wird nie zurückgesetzt */
-async function nextNr(year) {
+async function nextNr(year) { return retry(() => nextNrOnce(year)); }
+async function nextNrOnce(year) {
   const f = await ghFile("counter.json", G.dataRepo);
   const c = f ? JSON.parse(f.text) : {};
   const n = (c[year] || 0) + 1; c[year] = n;
@@ -537,7 +546,7 @@ async function nextNr(year) {
   return `HZ-${year}-${String(n).padStart(3, "0")}`;
 }
 const nrOf = d => d.nr || contractCode(d);
-async function updateIndex(fn) { const list = await loadIndex(); const out = fn(list) || list; await saveIndex(out); INDEX = out; ls.set("fs_index_cache", out); renderList(); }
+async function updateIndex(fn) { const out = await retry(async () => { const list = await loadIndex(); const o = fn(list) || list; await saveIndex(o); return o; }); INDEX = out; ls.set("fs_index_cache", out); renderList(); }
 function linkOf(x) { return location.href.split("#")[0] + "#" + x.id + x.k; }
 function renderList() {
   const list = INDEX;
@@ -620,8 +629,10 @@ function initStudio() {
       if (EDIT) { id = EDIT.id; kb = u2b(EDIT.k); } else { id = b2u(rnd(6)); kb = rnd(16); }
       d.nr = (EDIT && EDIT.nr) ? EDIT.nr : await nextNr(String(new Date().getFullYear()));
       const file = await encryptData(d, kb);
-      const cur = EDIT ? await ghFile(`v/${id}.json`) : null;
-      await gh("PUT", `/contents/v/${id}.json`, { message: (EDIT ? "Vertrag geändert " : "Vertrag ") + id, content: btoa(file), branch: G.branch, ...(cur ? { sha: cur.sha } : {}) });
+      await retry(async () => {
+        const cur = EDIT ? await ghFile(`v/${id}.json`) : null;
+        await gh("PUT", `/contents/v/${id}.json`, { message: (EDIT ? "Vertrag geändert " : "Vertrag ") + id, content: btoa(file), branch: G.branch, ...(cur ? { sha: cur.sha } : {}) });
+      });
       const entry = { id, k: b2u(kb), nr: d.nr, namen: names(d), datum: d.datum, total: calc(d).total, code: contractCode(d), vd: d.vd, vz: vzweck(d) };
       await updateIndex(list => { const i = list.findIndex(x => x.id === id); if (i >= 0) list[i] = entry; else list.unshift(entry); return list; });
       const link = linkOf(entry);
