@@ -247,12 +247,16 @@ details[open] summary{margin-bottom:8px}
       <div class="actions"><button type="button" id="k_sign">Unterschreiben &amp; PDF erstellen</button></div>
       <div id="k_done" hidden>
         <div class="msg ok">Fertig! Euer unterschriebener Vertrag ist erstellt. Bitte schickt ihn uns jetzt per Mail an <strong id="k_mailto_txt"></strong>.</div>
+        <ol class="note" id="k_steps" style="padding-left:20px;margin:10px 0">
+          <li>Auf <strong>„PDF per E-Mail an Foto Schuh senden“</strong> tippen und <strong>Mail</strong> auswählen – die PDF ist dann schon im Anhang.</li>
+          <li>Ins Feld <strong>„An“</strong> tippen und <strong>Einsetzen</strong> wählen. Die Adresse ist schon kopiert und steht auch im Mail-Text.</li>
+          <li>Auf <strong>Senden</strong> tippen.</li>
+        </ol>
         <div class="actions">
-          <button type="button" id="k_share" hidden>PDF an Foto Schuh senden</button>
-          <a class="btn ghost" id="k_dl" href="#" download>PDF speichern</a>
-          <a class="btn ghost" id="k_mailbtn" href="#">E-Mail öffnen</a>
+          <button type="button" id="k_share" hidden>PDF per E-Mail an Foto Schuh senden</button>
+          <a class="btn ghost" id="k_dl" href="#" download>PDF auf Gerät speichern</a>
         </div>
-        <p class="note">Am PC: PDF speichern, dann im E-Mail-Programm als Anhang anfügen. Am Handy: „PDF an Foto Schuh senden“ und Mail auswählen.</p>
+        <p class="note" id="k_noshare" hidden>Dieses Gerät kann die PDF nicht direkt an die Mail-App geben. Bitte „PDF auf Gerät speichern“ tippen und die Datei in einer E-Mail an <strong>info@foto-schuh.de</strong> als Anhang anfügen.</p>
         <p class="note" id="k_payhint"></p>
       </div>
     </section>
@@ -744,11 +748,13 @@ async function sign() {
     $("k_dl").href = url; $("k_dl").setAttribute("download", fname);
     $("k_mailto_txt").textContent = S.mail;
     const subj = `Unterschriebener Hochzeitsvertrag – ${names(d)} – ${dDE(d.datum)}`;
-    $("k_mailbtn").href = `mailto:${S.mail}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent("Hallo Foto Schuh,\n\nanbei unser unterschriebener Hochzeitsvertrag (PDF im Anhang).\n\nViele Grüße\n" + names(d))}`;
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      $("k_share").hidden = false;
-      $("k_share").onclick = () => navigator.share({ files: [file], title: subj, text: `An ${S.mail}: ${subj}` }).catch(() => {});
-    }
+    const mailText = `${subj}\n\nBitte an folgende E-Mail-Adresse senden:\n${S.mail}\n\nHallo Foto Schuh,\nanbei unser unterschriebener Hochzeitsvertrag (PDF im Anhang).\n\nViele Grüße\n${names(d)}`;
+    const canShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+    $("k_share").hidden = !canShare; $("k_steps").hidden = !canShare; $("k_noshare").hidden = canShare;
+    $("k_share").onclick = () => {
+      if (navigator.clipboard) navigator.clipboard.writeText(S.mail).catch(() => {});   // Adresse zum Einsetzen bereitlegen
+      navigator.share({ files: [file], title: subj, text: mailText }).catch(() => {});
+    };
     const c = calc(d);
     $("k_payhint").textContent = `Nicht vergessen: Terminreservierung ${eur(c.res)} innerhalb von 7 Tagen überweisen – Verwendungszweck: ${vzweck(d)}`;
     $("k_done").hidden = false;
