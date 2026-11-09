@@ -292,7 +292,7 @@ const CONFIG = {
   preise: { std: 99, halb: 49.5, km: 0.90, zuschlag: 0.35, reservierung: 0.50, mwst: 0.19 },
   pakete: {
     p1: { name: "Paket 1", dauer: "ca. 2 Stunden", preis: 299, leistungen: [
-      "kostenloses persönliches Vorgespräch", "Aufnahmen der Trauung", "Paarfotos im Freien & Gruppenbild",
+      "kostenloses persönliches Vorgespräch", "Aufnahmen der Trauung", "Gruppenbild & Paarfotos im Freien an einem Ort eurer Wahl",
       "passwortgeschützte Online-Galerie", "alle Bilder bearbeitet zum Download" ] },
     p2: { name: "Paket 2", dauer: "ca. 3 Stunden", preis: 449, leistungen: [
       "kostenloses persönliches Vorgespräch", "Aufnahmen der Trauung", "Sektempfang & Gratulationen",
@@ -411,7 +411,9 @@ function legalText(d) {
   const u = d.u, c = calc(d), pr = Math.round(u.reservierung * 100);
   return [
     { h: "Gut zu wissen", p: [
-      `Die angegebene Dauer ist ein Richtwert. Dauert der Tag länger, berechnen wir jede weitere Stunde mit ${eur(u.std)} und jede angefangene halbe Stunde mit ${eur(u.halb)}. Bei Regen weichen wir für die Paarfotos gemeinsam ins Studio aus.` ] },
+      `Die angegebene Dauer ist ein Richtwert. Dauert der Tag länger, berechnen wir jede weitere Stunde mit ${eur(u.std)} und jede angefangene halbe Stunde mit ${eur(u.halb)}. Bei Regen weichen wir für die Paarfotos gemeinsam ins Studio aus.`,
+      /* Fahrtkosten-Regel nur für Verträge ab Version 2 – bereits verschickte Verträge bleiben unverändert */
+      ...(d.tv >= 2 ? [`Fahrten bis 15 km ab unserem Studio sind im Paketpreis enthalten. Für weitere Strecken berechnen wir ${eur(u.km)} pro gefahrenem Kilometer ab dem Studio, inklusive der Fahrten zwischen den Locations. Dauert die Anfahrt länger als eine Stunde pro Strecke, berechnen wir die darüber hinausgehende Fahrzeit mit ${eur(u.std / 2)} pro Stunde. Die vereinbarten Fahrtkosten sind oben in der Preisübersicht aufgeführt. Ändern sich Orte nach Vertragsabschluss, werden zusätzliche Kilometer und Fahrzeit entsprechend nachberechnet.`] : []) ] },
     { h: "4. Terminreservierung und Zahlung", p: [
       `Mit Unterzeichnung dieses Vertrages wird für die Terminreservierung ein Betrag von ${pr} % des Gesamtbetrages fällig (${eur(c.res)}), zahlbar innerhalb von 7 Tagen per Überweisung oder im Studio bar bzw. mit Karte. Erst mit Eingang der Terminreservierung ist der Termin verbindlich gebucht. Ab dann hält der Fotograf den Tag exklusiv für das Hochzeitspaar frei und sagt andere Anfragen für diesen Tag ab. Die Terminreservierung wird vollständig auf den Gesamtbetrag angerechnet. Gern kann auch gleich der gesamte Betrag innerhalb von 7 Tagen überwiesen werden; die Terminreservierung ist darin enthalten. Der Restbetrag ist am Hochzeitstag nach dem Shooting fällig (bar oder mit Karte) oder nach Absprache vorab per Überweisung.`,
       `Bankverbindung: ${S.kontoinhaber} · ${S.bank} · IBAN ${S.iban} · BIC ${S.bic}`,
@@ -498,7 +500,7 @@ function studioData() {
     pkL: isInd ? v("indL").split("\n").map(s => s.trim()).filter(Boolean) : P.leistungen,
     std: num(v("std")), halb: num(v("halb")), sonn: v("sonn") === "1", nacht: num(v("nacht")), km: num(v("km")),
     unt: r2(num(v("unt"))), sonstT: v("sonstT"), sonstB: r2(num(v("sonstB"))), notiz: v("notiz"),
-    vd: today(), u: { ...CONFIG.preise },
+    vd: today(), tv: 2, u: { ...CONFIG.preise },
     vzName: ($("s_n1").value.trim().split(/\s+/).pop() || "")
   };
 }
