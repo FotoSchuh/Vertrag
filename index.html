@@ -175,7 +175,7 @@ details[open] summary{margin-bottom:8px}
         <div class="actions">
           <a class="btn" id="s_mailbtn" href="#">Per Mail ans Hochzeitspaar</a>
           <button type="button" class="ghost" id="s_copy">Link kopieren</button>
-          <a class="btn ghost" id="s_preview" href="#" target="_blank" rel="noopener">Ansicht wie beim Hochzeitspaar</a>
+          <a class="btn ghost" id="s_preview" href="#">Ansicht wie beim Hochzeitspaar</a>
         </div>
       </div>
     </form>
@@ -189,6 +189,9 @@ details[open] summary{margin-bottom:8px}
 
   <!-- ===================== KUNDE ===================== -->
   <main id="kunde" hidden>
+    <div id="k_studiobar" hidden style="position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;margin-bottom:10px">
+      <a class="btn ghost" id="k_back" href="#studio">← Zurück zum Studio-Bereich</a>
+    </div>
     <span class="badge">Euer Vertrag</span>
     <h1 id="k_title">Hochzeitsvertrag</h1>
     <p class="lead">Wir haben euren Vertrag vorbereitet. Bitte lest alles in Ruhe durch, entscheidet, ob wir Bilder als Referenz zeigen dürfen, und unterschreibt ganz unten. Danach schickt ihr uns die PDF zurück.</p>
@@ -550,13 +553,16 @@ async function nextNrOnce(year) {
 }
 const nrOf = d => d.nr || contractCode(d);
 async function updateIndex(fn) { const out = await retry(async () => { const list = await loadIndex(); const o = fn(list) || list; await saveIndex(o); return o; }); INDEX = out; ls.set("fs_index_cache", out); renderList(); }
-function linkOf(x) { return location.href.split("#")[0] + "#" + x.id + x.k; }
+const baseUrl = () => location.href.split("#")[0].split("?")[0];
+function linkOf(x) { return baseUrl() + "#" + x.id + x.k; }
+/* Studio-Vorschau: gleicher Vertrag, aber mit „?s“ – zeigt oben „Zurück zum Studio-Bereich“ */
+const previewOf = link => link.replace("#", "?s#");
 function renderList() {
   const list = INDEX;
   if (!list.length) { $("s_list").innerHTML = `<tr><td class="note">Noch keine Verträge. Nach „Vertrag erstellen“ erscheinen sie hier – auf allen Geräten.</td></tr>`; return; }
   $("s_list").innerHTML = `<tr><th>Hochzeitspaar</th><th>Hochzeit</th><th>Gesamt</th><th>Nummer / Verwendungszweck</th><th>Stand</th><th></th></tr>` +
     list.map((x, i) => `<tr><td>${esc(x.namen)}</td><td>${esc(dDE(x.datum))}</td><td>${eur(x.total)}</td><td><span class="code">${esc(x.nr || x.code)}</span><br><span class="note">Prüfcode ${esc(x.code)}</span><br><span class="note">${esc(x.vz || "")}</span></td><td>${esc(dDE(x.vd))}</td>
-      <td style="white-space:nowrap"><a href="${esc(linkOf(x))}" target="_blank" rel="noopener">Ansehen</a> · <a href="#" data-edit="${i}">Bearbeiten</a> · <a href="#" data-del="${i}" title="Löscht den Vertrag auch online – der Link funktioniert danach nicht mehr">Löschen</a></td></tr>`).join("");
+      <td style="white-space:nowrap"><a href="${esc(previewOf(linkOf(x)))}">Ansehen</a> · <a href="#" data-edit="${i}">Bearbeiten</a> · <a href="#" data-del="${i}" title="Löscht den Vertrag auch online – der Link funktioniert danach nicht mehr">Löschen</a></td></tr>`).join("");
 }
 async function refreshList() {
   INDEX = ls.get("fs_index_cache", []); renderList();
@@ -591,7 +597,7 @@ function editMode(on, x) {
 function showResult(d, link) {
   const code = contractCode(d), c = calc(d);
   $("s_code").textContent = nrOf(d) + " · Prüfcode " + code; $("s_vz").textContent = vzweck(d);
-  $("s_link").textContent = link; $("s_preview").href = link;
+  $("s_link").textContent = link; $("s_preview").href = previewOf(link);
   const body = `Hallo ${names(d)},\n\nwie besprochen schicken wir euch euren Hochzeitsvertrag für den ${dDE(d.datum)}.\n\nBitte öffnet diesen Link, lest alles in Ruhe durch und unterschreibt direkt am Handy oder PC:\n\n${link}\n\nDanach schickt ihr uns die PDF einfach per Mail zurück. Die Terminreservierung von ${eur(c.res)} überweist ihr bitte innerhalb von 7 Tagen:\n\nEmpfänger: ${S.kontoinhaber}\nIBAN: ${S.iban}\nBIC: ${S.bic}\nBetrag: ${eur(c.res)}\nVerwendungszweck: ${vzweck(d)}\n\nIhr könnt auch gleich den Gesamtbetrag von ${eur(c.total)} überweisen (Verwendungszweck: ${vzweck(d, "Gesamtbetrag")}). Dann ist am Hochzeitstag nichts mehr offen.\n\nIm Vertrag findet ihr für beide Varianten einen GiroCode zum Scannen.\n\nBei Fragen ruft uns gern an: ${S.tel}\n\nLiebe Grüße\nKay & Micha\n${S.name}`;
   $("s_mailbtn").href = `mailto:${encodeURIComponent(d.mail)}?subject=${encodeURIComponent("Euer Hochzeitsvertrag – " + S.name)}&body=${encodeURIComponent(body)}`;
   $("s_out").hidden = false;
@@ -886,6 +892,7 @@ async function boot() {
   const m = location.hash.match(/^#([A-Za-z0-9_-]{8})([A-Za-z0-9_-]{22})$/);
   if (!m) { showError("Hochzeitsvertrag", `Bitte öffnet den Link aus unserer Mail, um euren Vertrag zu sehen. Fragen? <strong>${esc(S.tel)}</strong> · ${esc(S.mail)}`); return; }
   $("kunde").hidden = false;
+  if (new URLSearchParams(location.search).has("s")) { $("k_studiobar").hidden = false; $("k_back").href = baseUrl() + "#studio"; }
   const file = await loadContractFile(m[1]);
   if (!file) { showError("Vertrag nicht gefunden", `Dieser Vertrag ist (noch) nicht verfügbar. Wurde er gerade erst verschickt, versucht es in einer Minute noch einmal. Sonst meldet euch bitte: <strong>${esc(S.tel)}</strong>.`); return; }
   let d; try { d = await decryptData(file, u2b(m[2])); } catch (e) { showError("Link unvollständig", `Dieser Vertragslink ist nicht vollständig. Bitte öffnet den Link direkt aus unserer Mail oder meldet euch bei uns: <strong>${esc(S.tel)}</strong>.`); return; }
