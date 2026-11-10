@@ -248,6 +248,11 @@ details[open] summary{margin-bottom:8px}
       <p class="note" style="margin-top:8px">Mit Finger oder Maus im Feld unterschreiben.</p>
       <div id="k_err" class="msg err" hidden></div>
       <div class="actions"><button type="button" id="k_sign">Unterschreiben &amp; PDF erstellen</button></div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+        <p class="note" style="margin:0 0 8px"><strong>Lieber auf Papier unterschreiben?</strong> Dann ladet euch den Vertrag als PDF herunter, druckt ihn aus, kreuzt an, unterschreibt und schickt ihn uns eingescannt oder abfotografiert an <strong id="k_papermail"></strong>.</p>
+        <button type="button" class="ghost" id="k_paper">PDF zum Ausdrucken und Unterschreiben</button>
+        <p class="msg ok" id="k_paperok" hidden>Die PDF ist erstellt. Bitte ausdrucken, ankreuzen, Ort und Datum eintragen, unterschreiben und eingescannt oder abfotografiert an <strong id="k_papermail2"></strong> schicken.</p>
+      </div>
       <div id="k_done" hidden>
         <div class="msg ok">Fertig! Euer unterschriebener Vertrag ist erstellt. Bitte schickt ihn uns jetzt per Mail an <strong id="k_mailto_txt"></strong>.</div>
         <ol class="note" id="k_steps" style="padding-left:20px;margin:10px 0">
@@ -470,7 +475,7 @@ const DATENSCHUTZ = () => [
     "• Fotos der Gäste im Rahmen der Hochzeitsreportage: berechtigtes Interesse des Hochzeitspaars und des Fotografen an der Dokumentation der Hochzeit (Art. 6 Abs. 1 lit. f DSGVO). Die Bilder gehen nur an das Hochzeitspaar.",
     "• Veröffentlichung von Bildern als Referenz nur mit Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die jederzeit für die Zukunft widerrufen werden kann."] },
   { h: "4. Wer die Daten erhält", p: ["Daten geben wir nur weiter, soweit das für den Auftrag oder gesetzlich nötig ist: an Portraitbox (Portraitbox GmbH) für die passwortgeschützte Online-Galerie und Bestellungen, an Fotolabore bei bestellten Abzügen oder Produkten, bei Kartenzahlung im Studio an Zettle by PayPal (PayPal (Europe) S.à r.l. et Cie, S.C.A., Luxemburg), beim Versand großer Bilddateien an WeTransfer (WeTransfer B.V., Amsterdam), an Banken sowie an unsere Steuerberatung. Mit Portraitbox besteht ein Auftragsverarbeitungsvertrag nach Art. 28 DSGVO. Die Vertragsseite wird über GitHub (GitHub Inc., USA) bereitgestellt. Den vorbereiteten Vertrag speichern wir dort verschlüsselt; lesbar ist er nur über euren persönlichen Link. Unsere Vertragsübersicht liegt in einem nicht öffentlichen Bereich, auf den nur wir Zugriff haben. Beim Aufruf verarbeitet GitHub technisch notwendige Verbindungsdaten wie eure IP-Adresse. GitHub ist nach dem EU-US Data Privacy Framework zertifiziert (Art. 45 DSGVO). Eure Unterschrift und die unterschriebene PDF entstehen nur auf eurem Gerät und erreichen uns per E-Mail. Nach Abschluss löschen wir den Online-Vertrag."] },
-  { h: "5. Wie lange wir Daten speichern", p: ["Vertrags- und Rechnungsdaten bewahren wir so lange auf, wie es Handels- und Steuerrecht vorschreiben (HGB, AO – bis zu 10 Jahre). Die Bilddaten archivieren wir für Nachbestellungen bis zu 3 Jahre nach der Hochzeit und löschen sie danach, sofern nichts anderes vereinbart ist. Die Online-Galerie ist zeitlich begrenzt verfügbar."] },
+  { h: "5. Wie lange wir Daten speichern", p: ["Vertrags- und Rechnungsdaten bewahren wir so lange auf, wie es Handels- und Steuerrecht vorschreiben (HGB, AO – bis zu 10 Jahre). Die Bilddaten archivieren wir für Nachbestellungen 12 Monate nach der Hochzeit und löschen sie danach, sofern nichts anderes vereinbart ist. Die Online-Galerie ist zeitlich begrenzt verfügbar."] },
   { h: "6. Eure Rechte", p: [`Ihr habt das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20 DSGVO) sowie das Recht, eine Einwilligung jederzeit für die Zukunft zu widerrufen (Art. 7 Abs. 3 DSGVO). Eine E-Mail an ${S.mail} genügt. Außerdem könnt ihr euch bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO), z. B. beim Landesbeauftragten für Datenschutz und Informationsfreiheit Mecklenburg-Vorpommern, Werderstraße 74a, 19055 Schwerin.`] },
   { h: "7. Widerspruchsrecht (Art. 21 DSGVO)", p: ["Soweit wir Daten auf Grundlage berechtigter Interessen verarbeiten (Art. 6 Abs. 1 lit. f DSGVO), könnt ihr – und auch jeder Gast – aus Gründen, die sich aus eurer besonderen Situation ergeben, jederzeit widersprechen. Gäste können dem Fotografen am Hochzeitstag einfach sagen, dass sie nicht fotografiert werden möchten. Einer Verarbeitung für Werbung könnt ihr jederzeit ohne Angabe von Gründen widersprechen."] },
   { h: "8. Pflicht zur Angabe von Daten", p: ["Die im Vertrag abgefragten Kontaktdaten brauchen wir, um den Auftrag durchzuführen. Ohne sie können wir den Vertrag nicht abschließen. Eine automatisierte Entscheidungsfindung oder Profiling findet nicht statt."] },
@@ -733,6 +738,8 @@ function initKunde(data) {
   document.querySelectorAll("[data-clear]").forEach(b => b.addEventListener("click", () => pads[b.dataset.clear].clear()));
   let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { pads.A.size(); pads.B.size(); }, 150); });
   $("k_sign").addEventListener("click", sign);
+  $("k_paper").addEventListener("click", paperPDF);
+  $("k_papermail").textContent = S.mail; $("k_papermail2").textContent = S.mail;
 }
 async function sign() {
   const d = kundeData(), err = [];
@@ -773,6 +780,23 @@ async function sign() {
     $("k_err").textContent = "Die PDF konnte nicht erstellt werden. Bitte versucht es mit einem anderen Browser oder ruft uns an: " + S.tel;
     $("k_err").hidden = false; $("k_sign").disabled = false; $("k_sign").textContent = "Unterschreiben & PDF erstellen";
   }
+}
+
+/* Papier-Variante: gleiche Vertrags-PDF, aber mit leeren Kästchen und Unterschriftslinien */
+async function paperPDF() {
+  const d = kundeData(), btn = $("k_paper");
+  btn.disabled = true; btn.textContent = "PDF wird erstellt …";
+  try {
+    const blob = await buildPDF(d, { paper: true });
+    const fname = `Hochzeitsvertrag_${(d.n1 || "").split(" ").pop()}_${d.datum}_zum_Unterschreiben.pdf`.replace(/[^\wäöüÄÖÜß.\-]/g, "_");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname;
+    document.body.appendChild(a); a.click(); a.remove();
+    $("k_paperok").hidden = false;
+  } catch (e) {
+    console.error(e);
+    $("k_err").textContent = "Die PDF konnte nicht erstellt werden. Bitte versucht es mit einem anderen Browser oder ruft uns an: " + S.tel;
+    $("k_err").hidden = false;
+  } finally { btn.disabled = false; btn.textContent = "PDF zum Ausdrucken und Unterschreiben"; }
 }
 
 function payHTML(d) {
@@ -823,6 +847,12 @@ async function buildPDF(d, s) {
   [`${S.name} · ${S.strasse} · ${S.ort}`, `Tel. ${S.tel} · ${S.mail}`, S.web].forEach((t, i) => doc.text(t, 210 - M, y + 5 + i * 4.2, { align: "right" }));
   y += 30;
   font(18, "bold", ORANGE); doc.text("VERTRAG – Hochzeitsfotografie", M, y + 6); y += 11;
+  if (s.paper) {
+    const hint = `Zum Ausdrucken und Unterschreiben: Bitte bei „Einwilligung Referenz“ Ja oder Nein ankreuzen, die beiden Bestätigungen ankreuzen, Ort und Datum eintragen und unterschreiben. Danach den Vertrag eingescannt oder abfotografiert an ${S.mail} schicken – wichtig ist vor allem die Seite mit den Unterschriften.`;
+    font(9, "bold"); const hl = doc.splitTextToSize(hint, W - 8), hh = hl.length * lh(9) + 6;
+    doc.setFillColor(253, 240, 228); doc.setDrawColor(...ORANGE); doc.roundedRect(M, y, W, hh, 2, 2, "FD");
+    doc.text(hl, M + 4, y + 3 + lh(9) * 0.8); y += hh + 4;
+  }
   para(`zwischen ${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} (im Folgenden „Fotograf“) und dem Hochzeitspaar (im Folgenden „Auftraggeber“):`);
   y += 1;
   kv("Name", d.n1); if (d.n2) kv("Name", d.n2);
@@ -863,20 +893,36 @@ async function buildPDF(d, s) {
   font(8, "normal", [110, 100, 94]); doc.text("GiroCode mit der Banking-App scannen – Betrag und Verwendungszweck sind schon eingetragen.", M, y); y += 4;
   blocks(legalText(d));
   head("Einwilligung Referenz");
+  if (s.paper) {
+    para("Bitte ankreuzen:", 9.5);
+    para("[   ] Ja, wir sind einverstanden, dass ausgewählte Bilder als Referenz veröffentlicht werden.", 10, "bold");
+    para("[   ] Nein, bitte keine Bilder von uns als Referenz veröffentlichen.", 10, "bold");
+  } else
   para(s.ref === "ja" ? "[X] Ja, wir sind einverstanden, dass ausgewählte Bilder als Referenz veröffentlicht werden.   [ ] Nein"
                       : "[ ] Ja   [X] Nein, bitte keine Bilder von uns als Referenz veröffentlichen.", 9.5, "bold");
   head("Bestätigung und Unterschrift");
-  para("[X] Wir haben unsere Daten geprüft und den Vertrag gelesen.   [X] Wir haben die Widerrufsbelehrung und die Datenschutzhinweise zur Kenntnis genommen.");
-  need(42); y += 2;
+  const box = s.paper ? "[   ]" : "[X]";
+  para(`${box} Wir haben unsere Daten geprüft und den Vertrag gelesen.   ${box} Wir haben die Widerrufsbelehrung und die Datenschutzhinweise zur Kenntnis genommen.`);
+  need(s.paper ? 52 : 42); y += 2;
   const sigW = (W - 10) / 2;
+  if (s.paper) {
+    /* leere Linien für Ort/Datum und Unterschrift – je Person eine Spalte */
+    const col = (x, name) => { doc.setDrawColor(30); font(8.5, "normal", [110, 100, 94]);
+      doc.line(x, y + 10, x + sigW, y + 10); doc.text("Ort, Datum", x, y + 14);
+      doc.line(x, y + 34, x + sigW, y + 34); doc.text(`Unterschrift ${name}`, x, y + 38); };
+    col(M, d.n1); if (d.n2) col(M + sigW + 10, d.n2);
+    y += 44;
+    para(`Für den Fotografen: ${S.name} – ${S.inhaber}, vorbereitet am ${dDE(d.vd)}. Bitte den unterschriebenen Vertrag eingescannt oder abfotografiert an ${S.mail} senden.`, 8.5, "normal", 0, [110, 100, 94]);
+  } else {
   const sig = (img, x, name) => { if (img) { const h = Math.min(26, sigW * s.ratio), w = h / s.ratio; doc.addImage(img, "PNG", x, y + 26 - h, w, h); }
     doc.setDrawColor(30); doc.line(x, y + 27, x + sigW, y + 27); font(8.5, "normal", [110, 100, 94]); doc.text(name, x, y + 31); };
   sig(s.sigA, M, `${d.n1} · ${s.ort}, ${s.datum}`);
   if (s.sigB) sig(s.sigB, M + sigW + 10, `${d.n2} · ${s.ort}, ${s.datum}`);
   y += 36;
   para(`Für den Fotografen: ${S.name} – ${S.inhaber}, vorbereitet am ${dDE(d.vd)}. Elektronisch unterschrieben am ${s.ts}.`, 8.5, "normal", 0, [110, 100, 94]);
+  }
   doc.addPage(); y = M; blocks(WIDERRUF());
-  doc.addPage(); y = M; blocks(DATENSCHUTZ());
+  y += 6; blocks(DATENSCHUTZ());   // Datenschutzhinweise direkt unter der Widerrufsbelehrung – spart eine Seite
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); font(7.5, "normal", [140, 130, 120]);
     doc.text(`${S.name} · Hochzeitsvertrag ${names(d)} · Vertragsnr. ${nrOf(d)} · Prüfcode ${code} · Seite ${i} von ${n}`, 105, 290, { align: "center" }); }
