@@ -126,6 +126,13 @@ details[open] summary{margin-bottom:8px}
         <div><label for="s_n2">Name 2</label><input id="s_n2"></div>
         <div><label for="s_str">Straße / Hausnummer</label><input id="s_str"></div>
         <div><label for="s_ort">PLZ / Ort</label><input id="s_ort"></div>
+        <div style="grid-column:1/-1"><label class="check" style="margin:2px 0 0"><input type="checkbox" id="s_adr2"><span>Abweichende Anschrift für Person 2</span></label></div>
+        <div id="s_adr2box" hidden style="grid-column:1/-1">
+          <div class="grid">
+            <div><label for="s_str2">Straße / Hausnummer Person 2</label><input id="s_str2"></div>
+            <div><label for="s_ort2">PLZ / Ort Person 2</label><input id="s_ort2"></div>
+          </div>
+        </div>
         <div><label for="s_tel">Telefon</label><input id="s_tel" type="tel"></div>
         <div><label for="s_mail">E-Mail</label><input id="s_mail" type="email"></div>
       </div>
@@ -495,13 +502,14 @@ function legalHTML(blocks, asDetails, title) {
 /* ============================================================
    STUDIO
    ============================================================ */
-const SF = ["n1","n2","str","ort","tel","mail","datum","zeit","trau","loc","pk","std","halb","sonn","nacht","km","unt","sonstT","sonstB","indP","indD","indL","notiz"];
+const SF = ["n1","n2","str","ort","str2","ort2","tel","mail","datum","zeit","trau","loc","pk","std","halb","sonn","nacht","km","unt","sonstT","sonstB","indP","indD","indL","notiz"];
 function studioData() {
   const v = id => $("s_" + id).value.trim();
   const pk = v("pk"), P = CONFIG.pakete[pk];
   const isInd = pk === "ind";
   return {
     n1: v("n1"), n2: v("n2"), str: v("str"), ort: v("ort"), tel: v("tel"), mail: v("mail"),
+    str2: $("s_adr2").checked ? v("str2") : "", ort2: $("s_adr2").checked ? v("ort2") : "",
     datum: v("datum"), zeit: v("zeit"), trau: v("trau"), loc: v("loc"),
     pkName: P.name, pkDauer: isInd ? (v("indD") || P.dauer) : P.dauer,
     pkPreis: isInd ? r2(num(v("indP"))) : P.preis,
@@ -514,9 +522,10 @@ function studioData() {
 }
 function studioRender() {
   $("indBox").hidden = $("s_pk").value !== "ind";
+  $("s_adr2box").hidden = !$("s_adr2").checked;
   const d = studioData();
   $("s_money").innerHTML = moneyRows(calc(d), d.u);
-  const draft = {}; SF.forEach(k => draft[k] = $("s_" + k).value); ls.set("fs_entwurf", draft);
+  const draft = {}; SF.forEach(k => draft[k] = $("s_" + k).value); draft.adr2 = $("s_adr2").checked; ls.set("fs_entwurf", draft);
   $("s_out").hidden = true;
 }
 /* ---------- Gemeinsame Vertragsliste (verschlüsselt im Projekt, für alle Geräte) ---------- */
@@ -586,7 +595,8 @@ async function refreshList() {
 }
 function fillForm(d) {
   const set = (k, v) => { $("s_" + k).value = v ?? ""; };
-  ["n1","n2","str","ort","tel","mail","datum","zeit","trau","loc","sonstT","notiz"].forEach(k => set(k, d[k]));
+  ["n1","n2","str","ort","str2","ort2","tel","mail","datum","zeit","trau","loc","sonstT","notiz"].forEach(k => set(k, d[k]));
+  $("s_adr2").checked = !!(d.str2 || d.ort2);
   ["std","halb","nacht","km","unt","sonstB"].forEach(k => set(k, d[k] || 0));
   $("s_sonn").value = d.sonn ? "1" : "0";
   const pk = Object.keys(CONFIG.pakete).find(k => CONFIG.pakete[k].name === d.pkName) || "ind";
@@ -626,7 +636,7 @@ function initStudio() {
   $("s_pk").innerHTML = Object.entries(CONFIG.pakete).map(([k, p]) => `<option value="${k}">${esc(p.name)}${p.preis ? " – " + eur(p.preis) : ""}</option>`).join("");
   $("s_pk").value = "p2";
   const draft = ls.get("fs_entwurf", null);
-  if (draft) SF.forEach(k => { if (draft[k] !== undefined) $("s_" + k).value = draft[k]; });
+  if (draft) { SF.forEach(k => { if (draft[k] !== undefined) $("s_" + k).value = draft[k]; }); $("s_adr2").checked = !!draft.adr2; }
   $("sf").addEventListener("input", studioRender);
   $("sf").addEventListener("change", studioRender);
   const reset = () => { $("sf").reset(); $("s_pk").value = "p2"; editMode(false); studioRender(); };
@@ -718,7 +728,10 @@ function initKunde(data) {
   D = data;
   $("kunde").hidden = false;
   $("k_title").textContent = "Hochzeitsvertrag" + (names(D) ? " – " + names(D) : "");
-  const dd = [["Name", D.n1], ["Name", D.n2], ["Anschrift", [D.str, D.ort].filter(Boolean).join(", ")], ["Telefon", D.tel], ["E-Mail", D.mail]];
+  const adr1 = [D.str, D.ort].filter(Boolean).join(", "), adr2 = [D.str2, D.ort2].filter(Boolean).join(", ");
+  /* abweichende Anschrift: jede Anschrift direkt unter dem jeweiligen Namen */
+  const dd = adr2 ? [["Name", D.n1], ["Anschrift", adr1], ["Name", D.n2], ["Anschrift", adr2], ["Telefon", D.tel], ["E-Mail", D.mail]]
+                  : [["Name", D.n1], ["Name", D.n2], ["Anschrift", adr1], ["Telefon", D.tel], ["E-Mail", D.mail]];
   $("k_daten").innerHTML = dd.filter(x => x[1]).map((x, i) => `<div><label for="kd${i}">${esc(x[0])}</label><input id="kd${i}" readonly value="${esc(x[1])}"></div>`).join("");
   const t = [["Datum der Hochzeit", dDE(D.datum)], ["Beginn", D.zeit ? D.zeit + " Uhr" : "nach Absprache"], ["Trauung / Standesamt", D.trau], ["Weitere Location", D.loc]];
   $("k_termin").innerHTML = t.filter(x => x[1]).map((x, i) => `<div><label for="kt${i}">${esc(x[0])}</label><input id="kt${i}" readonly value="${esc(x[1])}"></div>`).join("");
@@ -855,8 +868,10 @@ async function buildPDF(d, s) {
   }
   para(`zwischen ${S.name}, Inhaber ${S.inhaber}, ${S.strasse}, ${S.ort} (im Folgenden „Fotograf“) und dem Hochzeitspaar (im Folgenden „Auftraggeber“):`);
   y += 1;
-  kv("Name", d.n1); if (d.n2) kv("Name", d.n2);
-  kv("Anschrift", [d.str, d.ort].filter(Boolean).join(", ")); kv("Telefon", d.tel); kv("E-Mail", d.mail);
+  const adr1 = [d.str, d.ort].filter(Boolean).join(", "), adr2 = [d.str2, d.ort2].filter(Boolean).join(", ");
+  if (adr2) { kv("Name", d.n1); kv("Anschrift", adr1); kv("Name", d.n2); kv("Anschrift", adr2); }
+  else { kv("Name", d.n1); if (d.n2) kv("Name", d.n2); kv("Anschrift", adr1); }
+  kv("Telefon", d.tel); kv("E-Mail", d.mail);
   head("1. Termin und Ort");
   kv("Datum der Hochzeit", dDE(d.datum)); kv("Beginn", d.zeit ? d.zeit + " Uhr" : "nach Absprache");
   if (d.trau) kv("Trauung / Standesamt", d.trau); if (d.loc) kv("Weitere Location", d.loc);
