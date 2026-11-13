@@ -437,6 +437,8 @@ function legalText(d) {
     { h: "5. Bilder und Lieferung", p: [
       "• Der Fotograf wählt die gelungenen Aufnahmen aus und bearbeitet sie. Bildauswahl, Bildstil und Bearbeitung liegen im künstlerischen Ermessen des Fotografen; unbearbeitete Rohdaten werden nicht herausgegeben.",
       "• Die bearbeiteten Bilder erhält der Auftraggeber in der Regel innerhalb von 4 Wochen über eine passwortgeschützte Online-Galerie zum Download. Bitte ladet die Bilder zeitnah herunter und sichert sie.",
+      /* ab Vertragsversion 3 – bereits verschickte Verträge bleiben unverändert */
+      ...(d.tv >= 3 ? ["• Die Online-Galerie wird freigeschaltet, sobald der Gesamtbetrag vollständig bezahlt ist."] : []),
       "• Fotoabzüge und Fotoprodukte sind nicht im Paket enthalten und können nach aktueller Preisliste zusätzlich bestellt werden." ] },
     { h: "6. Nutzungsrechte und Urheberrecht", p: [
       "Nach vollständiger Bezahlung erhält der Auftraggeber ein zeitlich unbegrenztes, einfaches Nutzungsrecht an den gelieferten Bildern für private Zwecke – dazu gehört auch das Teilen in privaten sozialen Netzwerken. Eine gewerbliche Nutzung oder Weitergabe an Dritte zu gewerblichen Zwecken (z. B. an Dienstleister, Zeitschriften oder Wettbewerbe) ist nur nach Absprache erlaubt. Das Urheberrecht verbleibt beim Fotografen." ] },
@@ -516,7 +518,7 @@ function studioData() {
     pkL: isInd ? v("indL").split("\n").map(s => s.trim()).filter(Boolean) : P.leistungen,
     std: num(v("std")), halb: num(v("halb")), sonn: v("sonn") === "1", nacht: num(v("nacht")), km: num(v("km")),
     unt: r2(num(v("unt"))), sonstT: v("sonstT"), sonstB: r2(num(v("sonstB"))), notiz: v("notiz"),
-    vd: today(), tv: 2, u: { ...CONFIG.preise },
+    vd: today(), tv: 3, u: { ...CONFIG.preise },
     vzName: ($("s_n1").value.trim().split(/\s+/).pop() || "")
   };
 }
